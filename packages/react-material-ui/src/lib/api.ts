@@ -1,5 +1,5 @@
-import environment from '../../environments';
 import Cookies from 'js-cookie';
+import { Environment } from '../interfaces/Environment';
 
 export enum FetchMethod {
   Get = 'GET',
@@ -25,20 +25,24 @@ export interface ApiParams {
 }
 
 const api = {
-  getBaseUrl: (): string => environment.apiBaseUrl,
+  environment: {} as Environment,
+  setEnvironment: (environment: Environment) => {
+    api.environment = environment;
+  },
+  getBaseUrl: (): string => api.environment.apiBaseUrl,
   getAccessToken: (): string | undefined => {
-    return Cookies.get(environment.accessTokenKey);
+    return Cookies.get(api.environment.accessTokenKey);
   },
   setAccessToken: (token: string) => {
-    Cookies.set(environment.accessTokenKey, token, {
-      expires: environment.expires || 365,
-      domain: environment.domain || window.location.hostname,
-      secure: environment.secure || false
+    Cookies.set(api.environment.accessTokenKey, token, {
+      expires: api.environment.expires || 365,
+      domain: api.environment.domain || window.location.hostname,
+      secure: api.environment.secure || false
     });
   },
   removeAccessToken: () =>
-    Cookies.remove(environment.accessTokenKey, {
-      domain: environment.domain || window.location.hostname
+    Cookies.remove(api.environment.accessTokenKey, {
+      domain: api.environment.domain || window.location.hostname
     }),
   get: (path: string, queryParams: ApiParams): FetchRequest => {
     return api.fetch(FetchMethod.Get, path, queryParams);
@@ -62,10 +66,15 @@ const api = {
   ): FetchRequest => {
     const controller = new AbortController();
     const { signal } = controller; // allow aborting the fetch call
-    const url = new URL(path, environment.apiBaseUrl);
+    if (!api.environment.apiBaseUrl) {
+      throw new Error(
+        '`api.environment` not setup properly. Missing `apiBaseUrl`.'
+      );
+    }
+    const url = new URL(path, api.environment.apiBaseUrl);
     // console.log('url', url);
     const headers = {
-      [environment.accessTokenKey]: `Bearer ${api.getAccessToken()}`
+      [api.environment.accessTokenKey]: `Bearer ${api.getAccessToken()}`
     } as any;
     const options: RequestInit = {
       headers,

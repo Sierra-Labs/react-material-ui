@@ -2,7 +2,9 @@
 	"folders": [
 	  { "path": ".", "name": ".workspace"  },
 	  { "path": "packages/react-material-ui" },
-	  { "path": "packages/react-material-ui-demo" },
+	  { "path": "packages/react-material-ui-formik" },
+	  { "path": "packages/react-material-ui-formik-pickers" },
+	  { "path": "packages/demo" },
 	],
 	"settings": {
 	  "typescript.tsdk": "node_modules/typescript/lib",
