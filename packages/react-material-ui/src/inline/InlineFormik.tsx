@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import { CircularProgress, Typography } from '@material-ui/core';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 
-import { FetchError } from '../api/api';
-import { diff } from '../diff';
+import { FetchError } from '../lib/api';
+import { diff } from '../lib/diff';
 
 const StyledErrorBox = styled.div`
   display: flex;

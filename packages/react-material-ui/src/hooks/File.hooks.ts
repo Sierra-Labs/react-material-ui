@@ -1,6 +1,6 @@
 import { useApiPost } from './Api.hooks';
 import { useEffect, useState, useCallback, useRef } from 'react';
-import api from './api';
+import api from '../lib/api';
 
 export interface FilePresignedDto {
   file: File;

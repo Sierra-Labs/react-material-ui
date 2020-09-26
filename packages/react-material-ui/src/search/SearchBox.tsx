@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Paper, IconButton, InputBase } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { useDebounce } from './Debounce.hooks';
+import { useDebounce } from '../hooks/Debounce.hooks';
 
 const StyledSearchBox = styled.div`
   flex: 1;

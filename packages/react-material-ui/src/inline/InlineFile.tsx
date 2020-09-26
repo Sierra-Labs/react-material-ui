@@ -21,7 +21,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 
-import api from '../api/api';
+import api from '../lib/api';
 import { useUploadFiles } from '../api/File.hooks';
 import ConfirmDialog from '../dialogs/ConfirmDialog';
 

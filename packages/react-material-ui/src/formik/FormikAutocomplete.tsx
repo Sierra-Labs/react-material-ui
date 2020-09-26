@@ -10,7 +10,7 @@ import {
   TextFieldProps,
   CircularProgress
 } from '@material-ui/core';
-import { useDebounce } from '../Debounce.hooks';
+import { useDebounce } from '../hooks/Debounce.hooks';
 
 const StyledGrid = styled(Grid)`
   display: flex;

@@ -1,5 +1,10 @@
 import { useState, useEffect, useCallback, useReducer } from 'react';
-import api, { FetchRequest, FetchError, ApiParams, FetchMethod } from './api';
+import api, {
+  FetchRequest,
+  FetchError,
+  ApiParams,
+  FetchMethod
+} from '../lib/api';
 
 export interface ApiResult<T> {
   data?: T;
@@ -35,38 +40,28 @@ export interface ApiDeleteResult<T> extends ApiResult<T> {
 }
 
 export function useApiGet<T>(path: string): ApiGetResult<T> {
-  const result = useApiFetch<T>(FetchMethod.Get, path);
-  const get = result.fetchApi;
-  delete result.fetchApi;
-  return { ...result, get };
+  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Get, path);
+  return { ...params, get: fetchApi };
 }
 
 export function useApiPatch<T>(path: string): ApiPatchResult<T> {
-  const result = useApiFetch<T>(FetchMethod.Patch, path);
-  const patch = result.fetchApi;
-  delete result.fetchApi;
-  return { ...result, patch };
+  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Patch, path);
+  return { ...params, patch: fetchApi };
 }
 
 export function useApiPost<T>(path: string): ApiPostResult<T> {
-  const result = useApiFetch<T>(FetchMethod.Post, path);
-  const post = result.fetchApi;
-  delete result.fetchApi;
-  return { ...result, post };
+  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Post, path);
+  return { ...params, post: fetchApi };
 }
 
 export function useApiPut<T>(path: string): ApiPutResult<T> {
-  const result = useApiFetch<T>(FetchMethod.Put, path);
-  const put = result.fetchApi;
-  delete result.fetchApi;
-  return { ...result, put };
+  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Put, path);
+  return { ...params, put: fetchApi };
 }
 
 export function useApiDelete<T>(path: string): ApiDeleteResult<T> {
-  const result = useApiFetch<T>(FetchMethod.Delete, path);
-  const del = result.fetchApi;
-  delete result.fetchApi;
-  return { ...result, del };
+  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Delete, path);
+  return { ...params, del: fetchApi };
 }
 
 enum FetchActions {
