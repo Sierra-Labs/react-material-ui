@@ -1,0 +1,12 @@
+{
+    "eslint.validate": [
+      "javascript",
+      "javascriptreact",
+    ],
+    "editor.codeActionsOnSave": {
+      "source.fixAll": true
+    },
+    "editor.formatOnSave": true,
+    "typescript.tsdk": "node_modules/typescript/lib"
+  }
+  

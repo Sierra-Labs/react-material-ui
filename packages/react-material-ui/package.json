@@ -1,0 +1,61 @@
+{
+  "name": "@sierralabs/react-material-ui",
+  "version": "0.0.1",
+  "description": "Sierra React Material UI Library",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "module": "build/index.es.js",
+  "jsnext:main": "build/index.es.js",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "rollup -c",
+    "start": "rm -rf build && tsc --watch",
+    "test": "jest --watchAll"
+  },
+  "author": "",
+  "license": "Sierra Labs",
+  "engines": {
+    "node": "12.14.0"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/icons": "^4.9.1",
+    "@types/jest": "^25.1.2",
+    "@types/node": "^13.7.0",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
+    "@types/styled-components": "^5.1.0",
+    "@types/uuid": "^8.0.1",
+    "acorn-jsx": "^5.2.0",
+    "babel-jest": "^25.1.0",
+    "jest": "^25.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "rollup": "^1.31.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-peer-deps-external": "^2.2.2",
+    "rollup-plugin-typescript2": "^0.25.3",
+    "styled-components": "^5.1.0",
+    "ts-jest": "^25.2.0",
+    "tslib": "^2.0.0",
+    "typescript": "^3.7.5"
+  },
+  "peerDependencies": {
+    "@material-ui/core": "^4.9.14",
+    "@material-ui/icons": "^4.9.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "styled-components": "^5.1.0",
+    "uuid": "^8.3.0"
+  }
+}

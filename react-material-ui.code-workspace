@@ -1,0 +1,12 @@
+{
+	"folders": [
+	  { "path": ".", "name": ".workspace"  },
+	  { "path": "packages/react-material-ui" },
+	  { "path": "packages/react-material-ui-demo" },
+	],
+	"settings": {
+	  "typescript.tsdk": "node_modules/typescript/lib",
+	  "files.exclude": { "packages": true }
+	}
+  }
+  
