@@ -20,7 +20,7 @@ export interface InlineFormCardProps {
   description?: string;
 }
 
-const InlineFormCard: React.FC<InlineFormCardProps> = props => {
+export const InlineFormCard: React.FC<InlineFormCardProps> = props => {
   const { label, description, children } = props;
   return (
     <StyledCard className='survey-form-card'>

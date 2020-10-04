@@ -21,7 +21,7 @@ export interface FormikDatePickerProps {
   picker?: KeyboardDatePickerProps;
 }
 
-const FormikDatePicker: React.FC<FormikDatePickerProps> = props => {
+export const FormikDatePicker: React.FC<FormikDatePickerProps> = props => {
   let { label, name, placeholder, birthdate, picker, grid } = props;
   const [field, meta, { setValue, setError, setTouched }] = useField(props);
   if (!grid) {

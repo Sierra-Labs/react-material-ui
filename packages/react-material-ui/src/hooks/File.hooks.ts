@@ -9,19 +9,24 @@ export interface FilePresignedDto {
   expiration: number;
 }
 
+export const defaultPresignEndPoint = 'files/presign';
+
 export function useSecureFileUrl(url?: string) {
   if (url) {
     return `${url}&token=${api.getAccessToken()}`;
   }
 }
 
-export function useUploadFile(path: string) {
+export function useUploadFile(
+  path: string,
+  presignEndPoint = defaultPresignEndPoint
+) {
   const {
     presignedResult,
     isLoading: isLoadingPresignedUrl,
     error: presignedError,
     presignUrl
-  } = useCreatePresignedUrl(path);
+  } = useCreatePresignedUrl(path, presignEndPoint);
   const [progress, setProgress] = useState(0);
   const [file, setFile] = useState<File>();
   const [response, setResponse] = useState<Response>();
@@ -85,12 +90,15 @@ export interface UploadFile {
   presignedResult?: FilePresignedDto;
 }
 
-export function useUploadFiles(path: string) {
+export function useUploadFiles(
+  path: string,
+  presignEndPoint = defaultPresignEndPoint
+) {
   let {
     presignedResults,
     error: presignedError,
     presignUrls
-  } = useCreatePresignedUrls(path);
+  } = useCreatePresignedUrls(path, presignEndPoint);
   let fileIndexRef = useRef(0);
   const [uploadFiles, setUploadFiles] = useState<UploadFile[]>();
   const [isUploading, setIsUploading] = useState(false);
@@ -201,9 +209,12 @@ export function useUploadFiles(path: string) {
 /**
  * Get a single presigned url
  */
-export function useCreatePresignedUrl(path: string) {
+export function useCreatePresignedUrl(
+  path: string,
+  presignEndPoint = defaultPresignEndPoint
+) {
   const { isLoading, post, data, error } = useApiPost<FilePresignedDto>(
-    `files/presign/${path}`
+    `${presignEndPoint}/${path}`
   );
   const presignUrl = useCallback(
     (mimeType: string) => {
@@ -217,9 +228,12 @@ export function useCreatePresignedUrl(path: string) {
 /**
  * Support getting multiple presigned urls for bulk uploading
  */
-export function useCreatePresignedUrls(path: string) {
+export function useCreatePresignedUrls(
+  path: string,
+  presignEndPoint = defaultPresignEndPoint
+) {
   const { isLoading, post, data, error } = useApiPost<FilePresignedDto>(
-    `files/presign/${path}`
+    `${presignEndPoint}/${path}`
   );
   const filesRef = useRef<File[]>([]);
   const nextIndexRef = useRef(0);
@@ -235,11 +249,11 @@ export function useCreatePresignedUrls(path: string) {
       }
       // get presigned url for next item in queue
       if (nextIndexRef.current < filesRef.current.length && !isLoading) {
-        console.log(
-          'presignedUrls',
-          nextIndexRef.current,
-          filesRef.current[nextIndexRef.current]
-        );
+        // console.log(
+        //   'presignedUrls',
+        //   nextIndexRef.current,
+        //   filesRef.current[nextIndexRef.current]
+        // );
         post({ mimeType: filesRef.current[nextIndexRef.current].type });
       }
     },

@@ -101,7 +101,7 @@ export const renderNumberFormatter: (
 export type InlineNumberFieldProps = InlineTextFieldProps &
   FormikNumberFieldRenderOptions;
 
-const InlineNumberField: React.FC<InlineNumberFieldProps> = ({
+export const InlineNumberField: React.FC<InlineNumberFieldProps> = ({
   type = 'tel', // force number input on mobile
   prefix,
   suffix,

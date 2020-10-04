@@ -7,7 +7,7 @@ type InlineFormContent = GridProps<
   OverridableComponent<GridTypeMap<{}, 'div'>>
 >;
 
-const InlineFormContent: React.FC<InlineFormContent> = props => {
+export const InlineFormContent: React.FC<InlineFormContent> = props => {
   const { children } = props;
   return (
     <Grid item {...props}>

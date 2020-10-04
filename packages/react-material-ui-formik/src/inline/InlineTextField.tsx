@@ -50,7 +50,7 @@ export type InlineTextFieldProps = {
   ) => void;
 };
 
-const InlineTextField: React.FC<InlineTextFieldProps> = props => {
+export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
   let {
     children,
     multiline,

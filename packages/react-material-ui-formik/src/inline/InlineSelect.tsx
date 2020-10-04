@@ -13,7 +13,7 @@ export interface InlineSelectProps extends InlineTextFieldProps {
   options?: (InlineSelectOptions | string)[];
 }
 
-const InlineSelect: React.FC<InlineSelectProps> = props => {
+export const InlineSelect: React.FC<InlineSelectProps> = props => {
   let { options, children } = props;
 
   return (

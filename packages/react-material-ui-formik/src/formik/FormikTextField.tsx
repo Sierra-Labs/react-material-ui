@@ -19,12 +19,12 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
-type FormikTextFieldProps = TextFieldProps & {
+export type FormikTextFieldProps = TextFieldProps & {
   name: string;
   grid?: GridProps;
 };
 
-const FormikTextField: React.FC<FormikTextFieldProps> = props => {
+export const FormikTextField: React.FC<FormikTextFieldProps> = props => {
   let { variant, type } = props;
   let { name, grid, ...textFieldProps } = props;
   const [field, meta] = useField(name);

@@ -42,7 +42,7 @@ type InlineFormikProps<Values, ExtraProps = {}> = InlineFormikConfig<Values> &
     error?: Error | FetchError;
   };
 
-export default function InlineFormik<
+export function InlineFormik<
   Values extends FormikValues = FormikValues,
   ExtraProps = {}
 >(props: InlineFormikProps<Values, ExtraProps>) {

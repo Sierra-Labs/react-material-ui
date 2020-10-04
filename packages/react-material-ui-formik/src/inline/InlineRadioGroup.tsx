@@ -28,7 +28,7 @@ export interface InlineRadioGroupProps {
   grid?: GridProps<OverridableComponent<FormControlTypeMap<{}, 'div'>>>;
 }
 
-const InlineRadioGroup: React.FC<InlineRadioGroupProps> = props => {
+export const InlineRadioGroup: React.FC<InlineRadioGroupProps> = props => {
   const { label, name, isBoolean, disabled, options, grid } = props;
   const formik = useFormikContext();
   const [field, meta, { setValue }] = useField(props);

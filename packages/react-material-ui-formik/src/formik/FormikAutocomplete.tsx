@@ -24,7 +24,7 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
-type FormikAutocompleteProps<T> = TextFieldProps & {
+export type FormikAutocompleteProps<T> = TextFieldProps & {
   name: string;
   grid?: GridProps;
   loading?: boolean;
@@ -56,7 +56,9 @@ type FormikAutocompleteProps<T> = TextFieldProps & {
   getSelectedValue?: (option: T) => any;
 };
 
-const FormikAutocomplete: React.FC<FormikAutocompleteProps<any>> = props => {
+export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
+  any
+>> = props => {
   let {
     onSearch,
     onChange,

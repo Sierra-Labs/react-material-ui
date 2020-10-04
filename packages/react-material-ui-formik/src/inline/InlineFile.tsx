@@ -21,9 +21,10 @@ import AddIcon from '@material-ui/icons/Add';
 import CloseIcon from '@material-ui/icons/Close';
 import Alert from '@material-ui/lab/Alert';
 import {
+  api,
   ConfirmDialog,
-  useUploadFiles,
-  api
+  defaultPresignEndPoint,
+  useUploadFiles
 } from '@sierralabs/react-material-ui';
 
 const StyledGrid = styled(Grid)`
@@ -72,19 +73,23 @@ export interface InlineFileValue {
   size?: number;
 }
 
-const InlineFile: React.FC<{
+export interface InlineFileProps {
   multiple?: boolean;
   name: string;
   label?: string;
   uploadPath: string;
   inputType?: string;
   grid?: GridProps;
-}> = ({
+  presignEndPoint?: string;
+}
+
+export const InlineFile: React.FC<InlineFileProps> = ({
   multiple,
   label,
   grid,
   uploadPath,
   inputType,
+  presignEndPoint = defaultPresignEndPoint,
   ...fieldProps // Note: fieldProps needs to have `name` prop
 }) => {
   if (!grid) {
@@ -102,7 +107,10 @@ const InlineFile: React.FC<{
   const [openFileTypeConfirmDialog, setFileTypeConfirmDialog] = useState(false);
   const [attemptedFileName, setAttemptedFileName] = useState('');
 
-  const { uploadFiles, error, upload, remove } = useUploadFiles(uploadPath);
+  const { uploadFiles, error, upload, remove } = useUploadFiles(
+    uploadPath,
+    presignEndPoint
+  );
 
   // update progress and submit when completed
   useEffect(() => {

@@ -29,7 +29,7 @@ export type FormikSelectFieldProps = TextFieldProps & {
   options?: (FormikSelectOptions | string)[];
 };
 
-const FormikSelectField: React.FC<FormikSelectFieldProps> = props => {
+export const FormikSelectField: React.FC<FormikSelectFieldProps> = props => {
   let { variant, name, children, grid, options } = props;
   const [field, meta] = useField(name);
 

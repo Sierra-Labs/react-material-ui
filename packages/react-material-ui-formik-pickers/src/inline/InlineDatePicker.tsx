@@ -14,7 +14,7 @@ const StyledGrid = styled(Grid)`
   flex-direction: column;
 `;
 
-const InlineDatePicker: React.FC<{
+export interface InlineDatePickerProps {
   name: string;
   label: string;
   disabled?: boolean;
@@ -23,7 +23,9 @@ const InlineDatePicker: React.FC<{
   grid?: GridProps;
   birthdate?: boolean;
   picker?: KeyboardDatePickerProps;
-}> = props => {
+}
+
+export const InlineDatePicker: React.FC<InlineDatePickerProps> = props => {
   let {
     label,
     name,

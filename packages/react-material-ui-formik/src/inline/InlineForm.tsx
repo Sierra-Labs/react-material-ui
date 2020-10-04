@@ -14,7 +14,7 @@ const StyledInlineFormGrid = styled(Grid)`
   }
 ` as React.FC<InlineFormCardProps>;
 
-const InlineForm: React.FC<InlineFormCardProps> = props => {
+export const InlineForm: React.FC<InlineFormCardProps> = props => {
   const { spacing = 2, children } = props;
   return (
     <StyledInlineFormGrid
