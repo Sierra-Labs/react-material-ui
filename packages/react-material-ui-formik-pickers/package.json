@@ -2,12 +2,12 @@
   "name": "@sierralabs/react-material-ui-formik-pickers",
   "version": "0.0.2",
   "description": "Sierra React Material UI Formik Date Picker Library",
-  "main": "build/index.js",
-  "types": "build/index.d.ts",
-  "module": "build/index.es.js",
-  "jsnext:main": "build/index.es.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/index.es.js",
+  "jsnext:main": "dist/index.es.js",
   "files": [
-    "build"
+    "dist"
   ],
   "scripts": {
     "build": "yarn run clean && yarn run compile",

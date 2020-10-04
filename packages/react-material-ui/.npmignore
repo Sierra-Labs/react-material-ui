@@ -1,5 +1,5 @@
 *.spec.js
-*.story.js
+*.stories.js
 src
 node_modules
 

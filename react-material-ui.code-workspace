@@ -12,7 +12,7 @@
     },
     "editor.formatOnSave": true,
     "search.exclude": {
-      "**/build": true
+      "**/dist": true
     },
     "barrelr.excludeFileRegex": "(\\.spec\\.|\\.test\\.|\\.e2e\\.|\\.stories\\.)"
   }
