@@ -3071,7 +3071,7 @@
     core-js "^3.6.5"
     find-up "^4.1.0"
 
-"@storybook/source-loader@6.0.25":
+"@storybook/source-loader@6.0.25", "@storybook/source-loader@^6.0.25":
   version "6.0.25"
   resolved "https://registry.yarnpkg.com/@storybook/source-loader/-/source-loader-6.0.25.tgz#ab3cc05f075beffa7b85984e065c621e7ebbfdfd"
   integrity sha512-UZIYgdkx0GjHxowQ3KDHuLr+BkGV+RpLxp2l6bvvgHRAn8G+Yv45mPKCDD4dnRi+cfzH2zhylvJ6n/42FYcdoA==

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, ButtonProps, CircularProgress } from '@material-ui/core';
 import { useFormikContext } from 'formik';
 
-const FormikButton: React.FC<ButtonProps> = props => {
+export const FormikButton: React.FC<ButtonProps> = props => {
   const { variant, color, children } = props;
   const { dirty, isValid, isSubmitting } = useFormikContext();
   return (
