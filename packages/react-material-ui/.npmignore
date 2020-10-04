@@ -1,2 +1,5 @@
-src/
-node_modules/
+*.spec.js
+*.story.js
+src
+node_modules
+

@@ -1,14 +1,19 @@
 {
-	"folders": [
-	  { "path": ".", "name": ".workspace"  },
-	  { "path": "packages/react-material-ui" },
-	  { "path": "packages/react-material-ui-formik" },
-	  { "path": "packages/react-material-ui-formik-pickers" },
-	  { "path": "packages/demo" },
-	],
-	"settings": {
-	  "typescript.tsdk": "node_modules/typescript/lib",
-	  "files.exclude": { "packages": true }
-	}
+  "folders": [
+    { "path": ".", "name": ".workspace" },
+    { "path": "packages/react-material-ui" },
+    { "path": "packages/react-material-ui-formik" },
+    { "path": "packages/react-material-ui-formik-pickers" }
+  ],
+  "settings": {
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "files.exclude": {
+      "packages": true
+    },
+    "editor.formatOnSave": true,
+    "search.exclude": {
+      "**/build": true
+    },
+    "barrelr.excludeFileRegex": "(\\.spec\\.|\\.test\\.|\\.e2e\\.|\\.stories\\.)"
   }
-  
+}

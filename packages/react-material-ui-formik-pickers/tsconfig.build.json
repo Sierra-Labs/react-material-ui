@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.build.json",
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "outDir": "./build",
+    "rootDir": "./src"
+  },
+  "references": [
+    {
+      "path": "../react-material-ui/tsconfig.build.json"
+    },
+    {
+      "path": "../react-material-ui-formik/tsconfig.build.json"
+    }
+  ],
+  "include": ["src/**/*"]
+}

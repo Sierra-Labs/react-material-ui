@@ -24,7 +24,7 @@ export interface ApiParams {
   [key: string]: any;
 }
 
-const api = {
+export const api = {
   environment: {} as Environment,
   setEnvironment: (environment: Environment) => {
     api.environment = environment;

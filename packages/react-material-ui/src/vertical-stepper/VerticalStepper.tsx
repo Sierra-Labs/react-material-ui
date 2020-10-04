@@ -10,7 +10,7 @@ const StyledVerticalStepper = styled.div`
   z-index: 1;
 `;
 
-const VerticalStepper: React.FC = props => {
+export const VerticalStepper: React.FC = props => {
   const { children } = props;
   // React.Children.map(children, (child, index) => {
   //   const reactElement = child as ReactElement;

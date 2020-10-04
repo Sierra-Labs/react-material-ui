@@ -15,7 +15,7 @@ const StyledDiv = styled(Paper)`
   }
 `;
 
-const PageTemplateBodyCard: React.FC = props => {
+export const PageTemplateBodyCard: React.FC = props => {
   const { children } = props;
   return <StyledDiv className='page-template-body'>{children}</StyledDiv>;
 };

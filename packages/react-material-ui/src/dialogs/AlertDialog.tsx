@@ -17,7 +17,7 @@ export interface AlertDialogProps {
   onClose?: (buttonIndex: number) => void;
 }
 
-const AlertDialog: React.FC<AlertDialogProps> = ({
+export const AlertDialog: React.FC<AlertDialogProps> = ({
   title,
   message,
   buttonLabels,

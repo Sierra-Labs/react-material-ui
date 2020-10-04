@@ -19,7 +19,7 @@ export interface ConfirmDialogProps {
   onConfirm?: () => void;
 }
 
-const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
+export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
   title,
   message,
   cancelLabel,

@@ -51,7 +51,6 @@ const FormikTextField: React.FC<FormikTextFieldProps> = props => {
         {...textFieldProps}
         variant={variant || ('outlined' as any)}
         autoComplete='off'
-        name={name}
         error={meta.touched && Boolean(meta.error)}
         helperText={meta.error}
         type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
@@ -71,6 +70,7 @@ const FormikTextField: React.FC<FormikTextFieldProps> = props => {
           )
         }}
         {...field}
+        name={name}
       />
     </StyledGrid>
   );

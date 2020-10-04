@@ -17,7 +17,7 @@ const StyledPaper = styled(Paper)`
   }
 `;
 
-const PageTemplateCardOver: React.FC = props => {
+export const PageTemplateCardOver: React.FC = props => {
   const { children } = props;
   return (
     <StyledPaper elevation={2} className='card-over'>

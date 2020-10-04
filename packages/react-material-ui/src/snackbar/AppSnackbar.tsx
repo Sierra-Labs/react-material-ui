@@ -8,7 +8,7 @@ export interface AppSnackbarProps {
   onClose?: () => void;
 }
 
-const AppSnackbar: React.FC<AppSnackbarProps> = props => {
+export const AppSnackbar: React.FC<AppSnackbarProps> = props => {
   const { open, severity, children, onClose } = props;
   const [openSnackbar, setOpenSnackbar] = useState(open);
   const handleClose = () => {

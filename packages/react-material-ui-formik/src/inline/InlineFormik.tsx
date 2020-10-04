@@ -1,11 +1,17 @@
-import { Formik, FormikConfig, FormikHelpers, FormikValues } from 'formik';
+import {
+  Formik,
+  FormikConfig,
+  FormikHelpers,
+  FormikValues,
+  FormikProps
+} from 'formik';
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
 
 import { CircularProgress, Typography } from '@material-ui/core';
 import ReportProblemIcon from '@material-ui/icons/ReportProblem';
 
-import { FetchError } from '../lib/api';
+import styled from 'styled-components';
+import { FetchError } from '@sierralabs/react-material-ui';
 import { diff } from '../lib/diff';
 
 const StyledErrorBox = styled.div`
@@ -49,7 +55,7 @@ export default function InlineFormik<
     onSubmit,
     ...remainingProps
   } = props;
-  const formikRef = useRef<FormikValues>();
+  const formikRef = useRef<FormikProps<Values> | null>();
   // make a copy of the initialValues for use when comparing changes;
   // cached values are updated prior to submitting to retain changes;
   // we don't want to keep updating initialValues as that will cause
@@ -61,7 +67,7 @@ export default function InlineFormik<
   }, [initialValues]);
   useEffect(() => {
     if (formikRef && formikRef.current) {
-      formikRef.current.setSubmitting(isSubmitting);
+      formikRef.current.setSubmitting(isSubmitting || false);
     }
   }, [isSubmitting]);
 
@@ -91,14 +97,14 @@ export default function InlineFormik<
         // keep a reference of the formik object
         formikRef.current = formik;
         // forward the formik object if needed
-        if (innerRef) innerRef(formik);
+        if (innerRef)
+          (innerRef as (instance: FormikProps<Values> | null) => void)(formik);
       }}
       enableReinitialize
       initialValues={initialValues}
       onSubmit={(values: Values, formikHelpers: FormikHelpers<Values>) => {
+        // console.log('InlineFormik onSubmit', cachedValues, values);
         const valuesDiff = diff(cachedValues, values);
-        console.log('InlineFormik onSubmit', cachedValues, values);
-        // console.log('valuesDiff', valuesDiff);
         if (valuesDiff) {
           // set the cached values to prevent resubmitting the form; this
           // helps if saving is slow and user is making fast changes

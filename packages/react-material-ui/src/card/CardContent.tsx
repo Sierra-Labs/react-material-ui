@@ -44,7 +44,7 @@ export interface CardContentProps extends MuiCardContentProps {
   background?: 'primary' | 'secondary';
 }
 
-const CardContent: React.FC<CardContentProps> = props => {
+export const CardContent: React.FC<CardContentProps> = props => {
   const { children, padding = 'small', background } = props;
 
   const getClassName = () => {

@@ -1,0 +1,10 @@
+# dependencies
+node_modules
+
+# builds
+build
+
+# misc
+*.log
+.DS_Store
+.jest-*

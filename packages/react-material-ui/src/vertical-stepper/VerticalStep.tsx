@@ -79,7 +79,7 @@ interface VerticalStepProps {
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 }
 
-const VerticalStep: React.FC<VerticalStepProps> = props => {
+export const VerticalStep: React.FC<VerticalStepProps> = props => {
   const { label, step, completed, selected, onClick } = props;
   const getStepClass = (): string => {
     const classes = [];

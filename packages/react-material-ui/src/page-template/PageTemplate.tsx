@@ -59,7 +59,7 @@ const StyledPageTemplate = styled.div`
   }
 `;
 
-const PageTemplate: React.FC<{ className?: string }> = props => {
+export const PageTemplate: React.FC<{ className?: string }> = props => {
   const { children } = props;
   let { className = '' } = props;
   className += ' page-template';

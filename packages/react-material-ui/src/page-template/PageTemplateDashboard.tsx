@@ -10,7 +10,7 @@ const StyledDiv = styled.div`
   padding: 20px 30px 0 30px;
 `;
 
-const PageTemplateDashboard: React.FC = props => {
+export const PageTemplateDashboard: React.FC = props => {
   const { children } = props;
   return <StyledDiv className='page-template-dashboard'>{children}</StyledDiv>;
 };

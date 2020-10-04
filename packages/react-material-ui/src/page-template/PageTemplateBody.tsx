@@ -9,7 +9,7 @@ const StyledDiv = styled.div`
   margin: 0 -30px;
 `;
 
-const PageTemplateBody: React.FC = props => {
+export const PageTemplateBody: React.FC = props => {
   const { children } = props;
   return <StyledDiv className='page-template-body'>{children}</StyledDiv>;
 };

@@ -28,7 +28,7 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
   width?: number;
 }
 
-const SplitPane: React.FC<SplitPaneProps> = ({
+export const SplitPane: React.FC<SplitPaneProps> = ({
   ref,
   primary = 'previous',
   direction = 'horizontal',

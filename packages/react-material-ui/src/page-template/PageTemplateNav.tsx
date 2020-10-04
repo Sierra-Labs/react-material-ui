@@ -8,7 +8,7 @@ const StyledPageTemplateNav = styled.div`
   padding: 0 30px;
 `;
 
-const PageTemplateNav: React.FC = props => {
+export const PageTemplateNav: React.FC = props => {
   const { children } = props;
   return (
     <StyledPageTemplateNav className='page-template-nav'>

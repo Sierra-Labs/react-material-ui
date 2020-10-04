@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.build.json",
+
+  "compilerOptions": {
+    "baseUrl": "./packages",
+    "paths": {
+      "@sierralabs/react-material-ui": ["react-material-ui/src"],
+      "@sierralabs/react-material-ui-formik": ["react-material-ui-formik/src"],
+      "@sierralabs/react-material-ui-formik-pickers": [
+        "react-material-ui-formik-pickers/src"
+      ]
+    }
+  }
+}

@@ -12,7 +12,7 @@ const StyledCardTitleTypography = styled(Typography)`
     margin-right: 10px;
   }
 `;
-export default function CardTitle(props: TypographyProps) {
+export function CardTitle(props: TypographyProps) {
   const { children } = props;
   return (
     <StyledCardTitleTypography
@@ -24,3 +24,5 @@ export default function CardTitle(props: TypographyProps) {
     </StyledCardTitleTypography>
   );
 }
+
+export default CardTitle;

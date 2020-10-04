@@ -102,7 +102,7 @@ export const PageTemplateHeaderActions: React.FC<PageTemplateHeaderActionsProps>
   );
 };
 
-const PageTemplateHeader: React.FC = props => {
+export const PageTemplateHeader: React.FC = props => {
   const { children } = props;
   return (
     <StyledHeader className='page-template-header'>{children}</StyledHeader>

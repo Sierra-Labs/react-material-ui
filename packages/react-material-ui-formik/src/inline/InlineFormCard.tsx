@@ -1,8 +1,7 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { Card, Typography } from '@material-ui/core';
 import styled from 'styled-components';
-import Card from '../card/Card';
-import CardContent from '../card/CardContent';
+import { CardTitle, CardContent } from '@sierralabs/react-material-ui';
 
 const StyledCard = styled(Card)`
   form {
