@@ -1,131 +1,74 @@
-import { Breadcrumbs } from '@material-ui/core';
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useReducer
-} from 'react';
-import { Link } from 'react-router-dom';
+import React, { createContext, useCallback, useRef, useState } from 'react';
+// import Helmet from 'react-helmet';
 
-export interface BreadcrumbData {
-  label: string;
-  path?: string;
-}
+import { Breadcrumb } from './Breadcrumb.interface';
 
-export interface BreadcrumbContextState {
-  breadcrumbs: BreadcrumbData[];
-  dispatch: React.Dispatch<BreadcrumbReducerAction>;
-}
-
-export const BreadcrumbContext = createContext<BreadcrumbContextState>({
+export const BreadcrumbContext = createContext<{
+  breadcrumbs: Breadcrumb[];
+  registerBreadcrumb: (breadcrumb?: Breadcrumb) => number;
+  updateBreadcrumb: (index: number, breadcrumb: Breadcrumb) => void;
+  removeBreadcrumb: (index: number) => void;
+}>({
   breadcrumbs: [],
-  dispatch: () => {}
+  registerBreadcrumb: breadcrumb => 0,
+  updateBreadcrumb: (index, breadcrumb) => {},
+  removeBreadcrumb: index => {}
 });
-
-export const useBreadcrumb = (newBreadcrumb?: BreadcrumbData) => {
-  // console.log('useBreadcrumb');
-  const { dispatch } = useContext(BreadcrumbContext);
-  const [breadcrumb, setBreadcrumb] = useState(newBreadcrumb);
-  useEffect(() => {
-    // console.log('useEffect useBreadcrumb', breadcrumb);
-    if (breadcrumb) {
-      dispatch({ type: 'add', breadcrumb });
-      return () => {
-        // console.log('component unmounted');
-        dispatch({ type: 'remove', breadcrumb });
-      };
-    }
-  }, [breadcrumb, dispatch]);
-  return { setBreadcrumb };
-};
-
-export interface BreadcrumProviderProps {
-  initial?: BreadcrumbData[];
-}
-
-type BreadcrumbReducerAction =
-  | { type: 'replace'; breadcrumbs: BreadcrumbData[] }
-  | { type: 'add'; breadcrumb: BreadcrumbData }
-  | { type: 'remove'; breadcrumb: BreadcrumbData };
 
 /**
  * Breadcrumb Context Provider initializes the breadcrumb array and sets up
- * the methods for adding and removing breadcrumb items.
+ * the methods for setting breadcrumb items.
  * @param props
  */
-const BreadcrumbProvider: React.FC<BreadcrumProviderProps> = props => {
-  // console.log('render BreadcrumbProvider');
-  const { children, initial = [] } = props;
-  // const initialRef = useRef(initial);
-  const [breadcrumbs, dispatch] = useReducer(
-    (
-      breadcrumbs: BreadcrumbData[],
-      action: BreadcrumbReducerAction
-    ): BreadcrumbData[] => {
-      switch (action.type) {
-        case 'replace':
-          return action.breadcrumbs;
-        case 'add':
-          // console.log('adding breadcrumb', action.breadcrumb);
-          return [...breadcrumbs, action.breadcrumb];
-        case 'remove':
-          // console.log('removing breadcrumb', action.breadcrumb);
-          return breadcrumbs.filter(b => b !== action.breadcrumb);
-      }
-    },
-    initial
-  );
-
-  // useEffect(() => {
-  //   console.log('check same as previous init', initial !== initialRef.current);
-  //   console.log('breadcrumbs', breadcrumbs);
-  //   if (initial !== breadcrumbs && initial !== initialRef.current) {
-  //     console.log('replace', initialRef.current, 'with', initial);
-  //     breadcrumbs.splice(0, initialRef.current.length);
-  //     initialRef.current = initial;
-  //     dispatch({
-  //       type: 'replace',
-  //       breadcrumbs: [...initial, ...breadcrumbs]
-  //     });
-  //   }
-  // }, [breadcrumbs, initial]);
-
-  // useEffect(() => {
-  //   console.log('saved previous', initialRef.current);
-  //   initialRef.current = initial;
-  // }, [initial]);
-
+export const BreadcrumbProvider: React.FC<{ initial?: Breadcrumb[] }> = ({
+  children,
+  initial = [] // default to empty array if not provided
+}) => {
+  const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>(initial);
+  const breadcrumbsRef = useRef(breadcrumbs);
   return (
     <BreadcrumbContext.Provider
       value={{
         breadcrumbs,
-        dispatch
+        registerBreadcrumb: useCallback(breadcrumb => {
+          // setup the breadcrumb and return the index of the breadcrumb
+          const index = breadcrumbsRef.current.length;
+          if (breadcrumb) {
+            breadcrumb.index = index;
+          }
+          breadcrumbsRef.current.push(breadcrumb || { index, label: '' });
+          setBreadcrumbs([...breadcrumbsRef.current]);
+          // console.log('registerBreadcrumb', breadcrumb, index);
+          return index;
+        }, []),
+        updateBreadcrumb: useCallback((index, breadcrumb) => {
+          // find the breadcrumb and update it or insert at correct position;
+          // insert is needed because breadcrumb may have been removed due to
+          // unmount.
+          const arrayIndex = breadcrumbsRef.current.findIndex(
+            b => b.index === index
+          );
+          if (arrayIndex > -1) {
+            breadcrumbsRef.current[arrayIndex] = breadcrumb;
+          } else {
+            breadcrumb.index = index;
+            breadcrumbsRef.current.splice(index, 0, breadcrumb);
+          }
+          // console.log('updateBreadcrumb', index, breadcrumbsRef.current);
+          setBreadcrumbs([...breadcrumbsRef.current]);
+        }, []),
+        removeBreadcrumb: useCallback(index => {
+          // console.log('removeBreadcrumb', index);
+          const arrayIndex = breadcrumbsRef.current.findIndex(
+            b => b.index === index
+          );
+          breadcrumbsRef.current.splice(arrayIndex, 1);
+          setBreadcrumbs([...breadcrumbsRef.current]);
+        }, [])
       }}
     >
+      {/* <Helmet title={breadcrumbs.map(b => b.label).join(' / ')} /> */}
       {children}
     </BreadcrumbContext.Provider>
   );
 };
-
-export const BreadcrumbHeading: React.FC = () => {
-  const { breadcrumbs } = useContext(BreadcrumbContext);
-  // console.log('render BreadcrumHeading', breadcrumbs);
-  return (
-    <Breadcrumbs aria-label='breadcrumb'>
-      {breadcrumbs.map(breadcrumb => (
-        <h1 key={`${breadcrumb.label}::${breadcrumb.path}`}>
-          {breadcrumb.path ? (
-            <Link color='inherit' to={breadcrumb.path}>
-              {breadcrumb.label}
-            </Link>
-          ) : (
-            breadcrumb.label
-          )}
-        </h1>
-      ))}
-    </Breadcrumbs>
-  );
-};
-
-export default BreadcrumbProvider;

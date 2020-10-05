@@ -1,5 +1,5 @@
 import { useField, useFormikContext } from 'formik';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import styled from 'styled-components';
 import DoneIcon from '@material-ui/icons/Done';
 import ClearIcon from '@material-ui/icons/Clear';
@@ -22,6 +22,9 @@ import {
 const StyledGrid = styled(Grid)`
   display: flex;
   flex-direction: column;
+  .focus-controls {
+    margin-right: -10px;
+  }
   .select-field {
     margin-right: 22px;
   }
@@ -31,6 +34,12 @@ const StyledGrid = styled(Grid)`
   .multiline {
     margin-bottom: 10px;
   }
+  input {
+    min-width: 32px;
+  }
+  .error-label {
+    color: ${props => props.theme.palette.error.main};
+  }
 `;
 
 export type InlineTextFieldProps = {
@@ -38,15 +47,20 @@ export type InlineTextFieldProps = {
   label?: string;
   type?: string;
   value?: string | number;
+  error?: string;
   disabled?: boolean;
   multiline?: boolean;
   select?: boolean;
   placeholder?: string;
   grid?: GridProps;
   inputProps?: InputProps;
+  disableFocusControls?: boolean;
   variant?: 'standard' | 'filled' | 'outlined';
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  onBlur?: (
+    event: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
 };
 
@@ -60,12 +74,16 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
     type,
     value,
     placeholder,
+    error,
     disabled,
     grid,
     inputProps,
+    disableFocusControls,
     variant = 'outlined' as any,
-    onChange
+    onChange,
+    onBlur
   } = props;
+  // console.log('InlineTextField render name', name, value);
   const formik = useFormikContext();
   const [field, meta, { setValue, setTouched }] = useField(props);
   const [focus, setFocus] = useState(false);
@@ -99,6 +117,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
   };
   const handleCancel = () => {
     setTouched(false);
+    setFocus(false);
     setValue(previousValue);
   };
 
@@ -109,99 +128,144 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
     return classes.join(' ');
   };
 
-  if (!meta.error && formik.isSubmitting && meta.value !== previousValue) {
-    inputProps = {
-      ...inputProps,
-      endAdornment: (
-        <InputAdornment position='end' className={getAdornmentClasses()}>
-          <CircularProgress color='primary' size={25} />
-        </InputAdornment>
-      )
-    };
-  } else if (focus) {
-    inputProps = {
-      ...inputProps,
-      endAdornment: (
-        <InputAdornment position='end' className={getAdornmentClasses()}>
-          <ButtonGroup color='primary' variant='text'>
-            <Button size='small' tabIndex={-1} onClick={handleSubmit}>
-              <DoneIcon />
-            </Button>
-            <Button
-              size='small'
-              tabIndex={-1}
-              innerRef={cancelButtonRef}
-              onClick={event => {
-                event.stopPropagation();
-                handleCancel();
-              }}
+  inputProps = useMemo(() => {
+    if (!meta.error && formik.isSubmitting && meta.value !== previousValue) {
+      return {
+        ...inputProps,
+        endAdornment: (
+          <InputAdornment position='end' className={getAdornmentClasses()}>
+            <CircularProgress color='primary' size={25} />
+          </InputAdornment>
+        )
+      };
+    } else if (focus && !disableFocusControls) {
+      return {
+        ...inputProps,
+        endAdornment: (
+          <InputAdornment position='end' className={getAdornmentClasses()}>
+            <ButtonGroup
+              color='primary'
+              variant='text'
+              className='focus-controls'
             >
-              <ClearIcon />
-            </Button>
-          </ButtonGroup>
-        </InputAdornment>
-      )
-    };
-  }
-
-  return (
-    <ClickAwayListener
-      onClickAway={() => {
-        // console.log('onClickAway');
-        // handleSubmit();
-      }}
-    >
-      <StyledGrid item className='inline-text-field' {...grid}>
-        {label && (
-          <Typography variant='h5' gutterBottom>
-            {label}
-          </Typography>
-        )}
-        <TextField
-          variant={variant}
-          type={type}
-          // size='small'
-          multiline={multiline}
-          select={select}
-          name={name}
-          value={value || field.value}
-          // label={label}
-          placeholder={placeholder}
-          disabled={disabled}
-          // InputLabelProps={{ shrink: true }}
-          autoComplete='off'
-          error={meta.touched && Boolean(meta.error)}
-          helperText={meta.error}
-          InputProps={inputProps}
-          onFocus={() => setFocus(true)}
-          onChange={event => {
-            field.onChange(event);
-            // if editing disabled touched until blur
-            setTouched(false);
-            onChange?.(event);
-          }}
-          onKeyDown={event => {
-            // console.log('event.key', event.key);
-            switch (event.key) {
-              case 'Escape':
-                return handleCancel();
-              // case 'Tab':
-              // case 'Enter':
-              //   return handleSubmit();
-            }
-          }}
-          onBlur={event => {
-            if (event.relatedTarget === cancelButtonRef.current) {
-              handleCancel();
-            } else {
-              handleSubmit();
-            }
+              <Button size='small' tabIndex={-1} onClick={handleSubmit}>
+                <DoneIcon />
+              </Button>
+              <Button
+                size='small'
+                tabIndex={-1}
+                innerRef={cancelButtonRef}
+                onClick={event => {
+                  event.stopPropagation();
+                  handleCancel();
+                }}
+              >
+                <ClearIcon />
+              </Button>
+            </ButtonGroup>
+          </InputAdornment>
+        )
+      };
+    } else {
+      return inputProps;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    focus,
+    disableFocusControls,
+    meta.error,
+    meta.value,
+    meta.touched,
+    formik.isSubmitting
+  ]);
+  // useMemo prevents constant re-render
+  return useMemo(
+    () => {
+      return (
+        <ClickAwayListener
+          onClickAway={() => {
+            // console.log('onClickAway');
+            // handleSubmit();
           }}
         >
-          {children}
-        </TextField>
-      </StyledGrid>
-    </ClickAwayListener>
+          <StyledGrid item className='inline-text-field' {...grid}>
+            {label && (
+              <Typography
+                variant='h5'
+                gutterBottom
+                className={error || meta.error ? 'error-label' : ''}
+              >
+                {label}
+              </Typography>
+            )}
+            <TextField
+              variant={variant}
+              type={type}
+              // size='small'
+              multiline={multiline}
+              select={select}
+              name={name}
+              value={value || field.value || ''}
+              // label={label}
+              placeholder={placeholder}
+              disabled={disabled}
+              // InputLabelProps={{ shrink: true }}
+              autoComplete='off'
+              error={Boolean(error) || (meta.touched && Boolean(meta.error))}
+              helperText={error || meta.error}
+              InputProps={inputProps}
+              onFocus={() => setFocus(true)}
+              onChange={
+                onChange ||
+                (event => {
+                  console.log('inline text field change');
+                  field.onChange(event);
+                  // if editing disabled touched until blur
+                  setTouched(false);
+                })
+              }
+              onKeyDown={event => {
+                // console.log('event.key', event.key);
+                switch (event.key) {
+                  case 'Escape':
+                    return handleCancel();
+                  // case 'Tab':
+                  // case 'Enter':
+                  //   return handleSubmit();
+                }
+              }}
+              onBlur={
+                onBlur ||
+                (event => {
+                  if (event.relatedTarget === cancelButtonRef.current) {
+                    handleCancel();
+                  } else {
+                    handleSubmit();
+                  }
+                })
+              }
+            >
+              {children}
+            </TextField>
+          </StyledGrid>
+        </ClickAwayListener>
+      );
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      field.value,
+      meta.error,
+      meta.touched,
+      focus,
+      inputProps,
+      select,
+      type,
+      label,
+      placeholder,
+      value,
+      multiline,
+      disabled
+    ]
   );
 };
 

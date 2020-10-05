@@ -3,6 +3,7 @@ export * from './InlineForm';
 export * from './InlineFormCard';
 export * from './InlineFormContent';
 export * from './InlineFormik';
+export * from './InlineImage';
 export * from './InlineNumberField';
 export * from './InlineRadioGroup';
 export * from './InlineSelect';

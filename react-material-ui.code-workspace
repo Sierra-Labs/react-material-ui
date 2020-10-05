@@ -1,6 +1,7 @@
 {
   "folders": [
     { "path": ".", "name": ".workspace" },
+    { "path": "packages/react-material-ui-cli" },
     { "path": "packages/react-material-ui" },
     { "path": "packages/react-material-ui-formik" },
     { "path": "packages/react-material-ui-formik-pickers" }
