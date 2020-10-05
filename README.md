@@ -16,5 +16,6 @@ To start the development environment run
 
 ```bash
 $ yarn install
+$ yarn build
 $ yarn dev
 ```
