@@ -15,6 +15,6 @@ The project was built using typescript, yarn, lerna, and storybook.
 To start the development environment run
 
 ```bash
-$ yarn bootstrap
+$ yarn install
 $ yarn dev
 ```
