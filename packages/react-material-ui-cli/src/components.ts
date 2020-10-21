@@ -12,13 +12,31 @@ export const components = [
   'CardTitle',
   'AlertDialog',
   'ConfirmDialog',
-  'AppSnackbar'
+  'AppSnackbar',
+  'Api',
+  'SearchBox',
+  'PageTemplate',
+  'PageTemplateCardOver',
+  'PageTemplateDashboard',
+  'PageTemplateHeader',
+  'PageTemplateHeaderActions',
+  'PaginatedList',
+  'useApiGet',
+  'useApiPost',
+  'useApiPut'
 ];
 
 /**
  * List of all react-material-ui-formik exported components
  */
-export const formikComponents = [];
+export const formikComponents = [
+  'FormikButton',
+  'FormikGrid',
+  'FormikTextField',
+  'InlineFormik',
+  'InlineForm',
+  'InlineTextField'
+];
 
 /**
  * List of all react-material-ui-formik-picker exported components

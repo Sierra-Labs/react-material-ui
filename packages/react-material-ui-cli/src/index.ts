@@ -3,7 +3,7 @@
 import { spawn } from 'child_process';
 import { prompt } from 'inquirer';
 import { Project } from 'ts-morph';
-import { SourceFile } from 'ts-morph';
+import { SourceFile, QuoteKind } from 'ts-morph';
 import { components } from './components';
 
 const installReactMaterialUi = async (packageManager: string) => {
@@ -83,7 +83,8 @@ const main = async () => {
   // await installReactMaterialUi(result.packageManager);
 
   const project = new Project({
-    tsConfigFilePath: `./tsconfig.json`
+    tsConfigFilePath: `./tsconfig.json`,
+    manipulationSettings: { quoteKind: QuoteKind.Single }
   });
   const sourceFiles = project.getSourceFiles();
   // console.log('sourceFiles', sourceFiles);
