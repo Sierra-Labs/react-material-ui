@@ -1,4 +1,4 @@
-import { useField, FieldInputProps } from 'formik';
+import { useField } from 'formik';
 import React, { useMemo } from 'react';
 import NumberFormat from 'react-number-format';
 

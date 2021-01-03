@@ -4,7 +4,11 @@ import { spawn } from 'child_process';
 import { prompt } from 'inquirer';
 import { Project } from 'ts-morph';
 import { SourceFile, QuoteKind } from 'ts-morph';
-import { components } from './components';
+import {
+  components,
+  formikComponents,
+  formikPickerComponents
+} from './components';
 
 const installReactMaterialUi = async (packageManager: string) => {
   return new Promise((resolve, reject) => {
@@ -23,10 +27,16 @@ const installReactMaterialUi = async (packageManager: string) => {
         reject({ command: `${packageManager} ${args.join(' ')}` });
         return;
       }
-      resolve();
+      resolve(undefined);
     });
   });
 };
+
+interface ImportsMap {
+  module: string;
+  components: string[];
+  imports: string[];
+}
 
 /**
  * Iterate through all imports and find react-material-ui components
@@ -35,7 +45,23 @@ const installReactMaterialUi = async (packageManager: string) => {
  */
 const replaceImports = (sourceFile: SourceFile) => {
   const declarations = sourceFile.getImportDeclarations();
-  const imports: string[] = [];
+  const importMap: ImportsMap[] = [
+    {
+      module: '@sierralabs/react-material-ui',
+      components: components,
+      imports: []
+    },
+    {
+      module: '@sierralabs/react-material-ui-formik',
+      components: formikComponents,
+      imports: []
+    },
+    {
+      module: '@sierralabs/react-material-ui-formik-pickers',
+      components: formikPickerComponents,
+      imports: []
+    }
+  ];
   for (const declaration of declarations) {
     if (!declaration.getModuleSpecifier().getText().includes('common')) {
       // skip if import is not referencing the 'common' folder
@@ -43,14 +69,22 @@ const replaceImports = (sourceFile: SourceFile) => {
     }
     const defaultImport = declaration.getDefaultImport()?.getText();
     const namedImports = declaration.getNamedImports();
-    if (defaultImport && components.includes(defaultImport)) {
-      imports.push(defaultImport);
-      declaration.removeDefaultImport();
-    }
-    for (const namedImport of namedImports) {
-      if (components.includes(namedImport.getName())) {
-        imports.push(namedImport.getText());
-        namedImport.remove();
+    for (let map of importMap) {
+      if (defaultImport && map.components.includes(defaultImport)) {
+        map.imports.push(defaultImport);
+        declaration.removeDefaultImport();
+      }
+      for (const namedImport of namedImports) {
+        if (map.components.includes(namedImport.getName())) {
+          map.imports.push(namedImport.getText());
+          namedImport.remove();
+        }
+      }
+      if (map.imports.length > 0) {
+        sourceFile.addImportDeclaration({
+          namedImports: map.imports,
+          moduleSpecifier: map.module
+        });
       }
     }
     if (
@@ -60,11 +94,7 @@ const replaceImports = (sourceFile: SourceFile) => {
       declaration.remove();
     }
   }
-  if (imports.length > 0) {
-    sourceFile.addImportDeclaration({
-      namedImports: imports,
-      moduleSpecifier: '@sierralabs/react-material-ui'
-    });
+  if (importMap.some(map => map.imports.length > 0)) {
     sourceFile.saveSync();
     console.log('Modified file: ', sourceFile.getFilePath());
   }

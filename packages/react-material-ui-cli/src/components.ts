@@ -23,22 +23,36 @@ export const components = [
   'PaginatedList',
   'useApiGet',
   'useApiPost',
-  'useApiPut'
+  'useApiPut',
+  'useApiDelete'
 ];
 
 /**
  * List of all react-material-ui-formik exported components
  */
 export const formikComponents = [
+  'FormikAutocomplete',
   'FormikButton',
   'FormikGrid',
+  'FormikSelectField',
   'FormikTextField',
-  'InlineFormik',
+  'InlineFile',
   'InlineForm',
+  'InlineFormCard',
+  'InlineFormContent',
+  'InlineFormik',
+  'InlineImage',
+  'InlineNumberField',
+  'InlineRadioGroup',
+  'InlineSelectField',
   'InlineTextField'
 ];
 
 /**
  * List of all react-material-ui-formik-picker exported components
  */
-export const formikPickerComponents = [];
+export const formikPickerComponents = [
+  'FormikDatePicker',
+  'InlineDatePicker',
+  'InlineDateTimePicker'
+];

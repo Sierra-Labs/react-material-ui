@@ -57,6 +57,42 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
+export enum InlineImageFit {
+  Fill = 'fill',
+  Contain = 'contain',
+  Cover = 'cover'
+}
+
+export interface InlineImageResize {
+  // if `width` is specified all images will be resized to this width.
+  width?: number;
+  // if `height` is specified all images will be resized to this height.
+  height?: number;
+  // if `maxWidth` is specified all images will not exceed this width.
+  // This property should not be used in conjunction with `width`.
+  maxWidth?: number;
+  // if `maxHeight` is specified all images will not exceed this height.
+  // This property should not be used in conjunction with `height`.
+  maxHeight?: number;
+  // if `minWidth` is specified all smaller width images will be upscaled to this width.
+  // This property should not be used in conjunction with `width`.
+  minWidth?: number;
+  // if `minHeight` is specified all smaller width images will be upscaled to this height.
+  // This property should not be used in conjunction with `height`.
+  minHeight?: number;
+  // The aspect fit when resizing.
+  fit?: InlineImageFit;
+  // resize image type (i.e. image/png, image/jpeg). If not specified defaults to same
+  // image type from file uploaded.
+  type?: string;
+  // if resizing jpeg specify the quality (defaults to 0.8)
+  quality?: number;
+  // warn if uploaded image is smaller than minWidth or minHeight
+  warnSmallImage?: boolean;
+  // warn if uploaded image aspect ratio is incorrect
+  warnAspectRatio?: boolean;
+}
+
 export interface InlineImageProps {
   name: string;
   label: string;
@@ -66,6 +102,7 @@ export interface InlineImageProps {
   title?: string;
   description?: string;
   disabled?: boolean;
+  resize?: InlineImageResize;
 }
 
 export const InlineImage: React.FC<InlineImageProps> = ({
@@ -76,7 +113,8 @@ export const InlineImage: React.FC<InlineImageProps> = ({
   grid,
   title,
   description,
-  disabled
+  disabled,
+  resize
 }) => {
   if (!grid) {
     // default field to expand entire width of form
@@ -119,6 +157,7 @@ export const InlineImage: React.FC<InlineImageProps> = ({
         }}
         title={title}
         description={description}
+        resize={resize}
       />
     </StyledGrid>
   );
@@ -186,6 +225,7 @@ export interface InlineImageDialogProps {
   onUploaded: (url: string) => void;
   title?: string;
   description?: string;
+  resize?: InlineImageResize;
 }
 export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   value,
@@ -194,7 +234,8 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   onCancel,
   onUploaded,
   title,
-  description
+  description,
+  resize
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const onUploadedRef = useRef(onUploaded);
@@ -218,7 +259,16 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
       const dataUrl = await readImageFile(file);
       setFile(file);
       setImageUrl(dataUrl);
-      // const image = await loadImageUri(dataUrl);
+      if (resize) {
+        if (!resize.type) {
+          resize.type = file.type;
+        }
+        let image = await loadImageUri(dataUrl);
+        image = await resizeImage(image, resize);
+        const blob = convertUriToBlob(image.src);
+        setFile(new File([blob], file.name, { type: resize.type }));
+        setImageUrl(image.src);
+      }
     }
   };
   const handleClear = () => {
@@ -334,4 +384,103 @@ const loadImageUri = (imageUri: string) => {
       reject(error);
     };
   });
+};
+
+export interface ResizeImageResult {
+  warningMessage?: string;
+}
+
+export const resizeImage = async (
+  image: HTMLImageElement,
+  resize: InlineImageResize
+) => {
+  const result: ResizeImageResult = {};
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d');
+  if (context === null) {
+    throw new Error('Unable to get 2D Canvas context.');
+  }
+  // let orientation = EXIF.getTag(this, 'Orientation');
+  // console.log('EXIF', EXIF.pretty(this))
+  let width = resize.width ? resize.width : image.width;
+  let height = resize.height ? resize.height : image.height;
+  if (!resize.width && resize.maxWidth && image.width > resize.maxWidth) {
+    width = resize.maxWidth;
+  }
+  if (!resize.width && resize.minWidth && image.width < resize.minWidth) {
+    width = resize.minWidth;
+  }
+  if (!resize.height && resize.maxHeight && image.height > resize.maxHeight) {
+    height = resize.maxHeight;
+  }
+  if (!resize.height && resize.minHeight && image.height < resize.minHeight) {
+    height = resize.minHeight;
+  }
+  if (resize.warnSmallImage && (image.width < width || image.height < height)) {
+    result.warningMessage =
+      'Selected image is smaller then intended size. Image may appear pixelated or blurry.';
+  } else if (
+    resize.warnAspectRatio &&
+    width / image.width !== height / image.height
+  ) {
+    result.warningMessage = 'Incorrect aspect ratio';
+  }
+
+  switch (resize.fit) {
+    case InlineImageFit.Cover:
+      {
+        canvas.width = width;
+        canvas.height = height;
+        const scale = Math.max(width / image.width, height / image.height);
+        width = image.width * scale;
+        height = image.height * scale;
+      }
+      break;
+    case InlineImageFit.Contain:
+      {
+        let scale = Math.min(width / image.width, height / image.height);
+        if (scale > 1.0) {
+          scale = 1.0;
+        } // don't enlarge the image
+        width = image.width * scale;
+        height = image.height * scale;
+        canvas.width = width;
+        canvas.height = height;
+      }
+      break;
+    default:
+      canvas.width = width;
+      canvas.height = height;
+      break;
+  }
+  // context.save();
+  // self.setOrientation(canvas, context, width, height, orientation);
+  (context as CanvasRenderingContext2D).drawImage(image, 0, 0, width, height);
+  // context.restore();
+  const imageUri = canvas.toDataURL(
+    resize.type || 'image/jpeg',
+    resize.quality || 0.8
+  );
+  return loadImageUri(imageUri);
+};
+
+export const convertUriToBlob = (dataURI: string): Blob => {
+  // convert base64/URLEncoded data component to raw binary data held in a string
+  let byteString;
+  if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+    byteString = atob(dataURI.split(',')[1]);
+  } else {
+    byteString = unescape(dataURI.split(',')[1]);
+  }
+
+  // separate out the mime component
+  const mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+  // write the bytes of the string to a typed array
+  const ia = new Uint8Array(byteString.length);
+  for (let i = 0; i < byteString.length; i++) {
+    ia[i] = byteString.charCodeAt(i);
+  }
+
+  return new Blob([ia], { type: mimeString });
 };
