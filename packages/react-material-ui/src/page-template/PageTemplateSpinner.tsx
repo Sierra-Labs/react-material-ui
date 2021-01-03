@@ -9,7 +9,7 @@ const StyledSpinnerContainer = styled.div`
   justify-content: center;
   flex: 1;
 `;
-const PageTemplateSpinner: React.FC = () => {
+export const PageTemplateSpinner: React.FC = () => {
   return (
     <StyledSpinnerContainer>
       <CircularProgress />

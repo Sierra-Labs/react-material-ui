@@ -80,12 +80,6 @@ const replaceImports = (sourceFile: SourceFile) => {
           namedImport.remove();
         }
       }
-      if (map.imports.length > 0) {
-        sourceFile.addImportDeclaration({
-          namedImports: map.imports,
-          moduleSpecifier: map.module
-        });
-      }
     }
     if (
       !declaration.getDefaultImport() &&
@@ -95,6 +89,14 @@ const replaceImports = (sourceFile: SourceFile) => {
     }
   }
   if (importMap.some(map => map.imports.length > 0)) {
+    for (let map of importMap) {
+      if (map.imports.length > 0) {
+        sourceFile.addImportDeclaration({
+          namedImports: map.imports,
+          moduleSpecifier: map.module
+        });
+      }
+    }
     sourceFile.saveSync();
     console.log('Modified file: ', sourceFile.getFilePath());
   }
