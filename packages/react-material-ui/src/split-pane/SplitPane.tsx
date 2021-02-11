@@ -25,7 +25,7 @@ export interface SplitPaneProps extends React.HTMLAttributes<HTMLDivElement> {
   ref?: RefObject<HTMLDivElement>;
   primary?: 'next' | 'previous';
   direction?: 'horizontal' | 'vertical';
-  width?: number;
+  width?: number | string;
 }
 
 export const SplitPane: React.FC<SplitPaneProps> = ({
@@ -33,7 +33,7 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
   primary = 'previous',
   direction = 'horizontal',
   children,
-  className,
+  className = '',
   width,
   ...props
 }) => {
@@ -126,7 +126,14 @@ export const SplitPane: React.FC<SplitPaneProps> = ({
       ref={ref}
       className={`split-pane ${direction} ${className}`}
       {...props}
-      style={width ? { flex: `0 0 auto`, width: `${width}px` } : {}}
+      style={
+        width !== undefined
+          ? {
+              flex: `0 0 auto`,
+              width: `${width}${typeof width === 'number' ? 'px' : ''}`
+            }
+          : {}
+      }
     >
       {childComponents.map((child, index) => (
         <Fragment key={index}>
@@ -165,19 +172,22 @@ const StyledPane = styled.div`
 export interface PaneProps extends React.HTMLAttributes<HTMLDivElement> {
   flex?: boolean;
   width?: number;
+  innerRef?: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const Pane: React.FC<PaneProps> = ({
   children,
   flex,
   width,
-  className,
+  innerRef,
+  className = '',
   ...props
 }) => {
   return (
     <StyledPane
-      className={`${flex && 'flex'} ${className || ''}`}
+      ref={innerRef}
       style={{ width }}
+      className={`${flex && 'flex'} ${className}`}
       {...props}
     >
       {children}

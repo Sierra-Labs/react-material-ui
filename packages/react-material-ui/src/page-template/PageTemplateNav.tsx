@@ -6,12 +6,22 @@ const StyledPageTemplateNav = styled.div`
   background: #fff;
   margin: 0 -30px;
   padding: 0 30px;
+  &.tabs {
+    flex-direction: column;
+    padding: 0;
+  }
 `;
 
-export const PageTemplateNav: React.FC = props => {
-  const { children } = props;
+export const PageTemplateNav: React.FC<
+  React.ComponentProps<typeof StyledPageTemplateNav> & { tabs?: boolean }
+> = ({ tabs, children, className, ...props }) => {
   return (
-    <StyledPageTemplateNav className='page-template-nav'>
+    <StyledPageTemplateNav
+      className={`page-template-nav${className ? ` ${className}` : ''}${
+        tabs ? ' tabs' : ''
+      }`}
+      {...props}
+    >
       {children}
     </StyledPageTemplateNav>
   );
