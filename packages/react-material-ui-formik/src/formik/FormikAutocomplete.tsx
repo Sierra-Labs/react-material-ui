@@ -54,6 +54,10 @@ export type FormikAutocompleteProps<T> = TextFieldProps & {
    * Used to override the selected value
    */
   getSelectedValue?: (option: T) => any;
+  /**
+   * A filter function that determines the options that are eligible.
+   */
+  filterOptions?: (options: T[], state: { inputValue: string }) => T[];
 };
 
 export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
@@ -70,10 +74,12 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
     getOptionSelected,
     getOptionLabel,
     getSelectedValue,
+    filterOptions,
     grid
   } = props;
   // Create a ref that store the onSearch handler
-  const searchHandler = useRef<(event: any) => void>();
+  const onSearchRef = useRef(onSearch);
+  const mountedRef = useRef(false);
   // Update ref.current value if handler changes.
   // This allows our effect below to always get latest handler ...
   // ... without us needing to pass it in effect deps array ...
@@ -82,18 +88,18 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
     // default to return option object
     getSelectedValue = (option: any) => option;
   }
-  useEffect(() => {
-    searchHandler.current = onSearch;
-  }, [onSearch]);
   const [field, meta, { setValue, setTouched }] = useField(name);
   const [open, setOpen] = useState(false);
-  // const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState(field.value);
   const [forceSearch, setForceSearch] = useState(false);
   const debouncedSearch = useDebounce(search ? search : '', 300);
   useEffect(() => {
-    if ((forceSearch || debouncedSearch) && searchHandler.current) {
-      searchHandler.current(debouncedSearch);
+    // mountedRef so that we don't onSearch on mount
+    if (forceSearch || mountedRef.current) {
+      onSearchRef.current?.(debouncedSearch);
+      setForceSearch(false);
+    } else {
+      mountedRef.current = true;
     }
   }, [debouncedSearch, forceSearch]);
 
@@ -101,7 +107,6 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
     // default field to expand entire width of form
     grid = { xs: 12 };
   }
-
   return (
     <StyledGrid item className='formik-autocomplete' {...grid}>
       <Autocomplete
@@ -112,12 +117,15 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
         getOptionDisabled={getOptionDisabled}
         getOptionSelected={getOptionSelected}
         getOptionLabel={getOptionLabel}
+        filterOptions={filterOptions}
         options={options}
         loading={loading}
-        onInputChange={(event, value, reason) => setSearch(value)}
+        onInputChange={(event, value, reason) => {
+          console.log('onInputChange', value);
+          setSearch(value);
+        }}
         onBlur={field.onBlur}
         onChange={(event: React.ChangeEvent<{}>, value: any) => {
-          console.log('onChange', value);
           if (onChange) {
             onChange(value);
           }

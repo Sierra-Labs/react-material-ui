@@ -1,4 +1,4 @@
-export * from './Breadcrumb.context';
-export * from './Breadcrumb.hooks';
-export * from './Breadcrumb.interface';
+export * from './Breadcrumb';
+export * from './BreadcrumbContext';
 export * from './BreadcrumbHeading';
+export * from './BreadcrumbItem';
