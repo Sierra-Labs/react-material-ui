@@ -3,17 +3,22 @@ import styled from 'styled-components';
 
 import { CircularProgress } from '@material-ui/core';
 
-const StyledSpinnerContainer = styled.div`
+const StyledDiv = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
 `;
-export const PageTemplateSpinner: React.FC = () => {
+export const PageTemplateSpinner: React.FC<React.ComponentProps<
+  typeof StyledDiv
+>> = ({ className, ...props }) => {
   return (
-    <StyledSpinnerContainer>
+    <StyledDiv
+      className={`page-template-spinner${className ? ` ${className}` : ''}`}
+      {...props}
+    >
       <CircularProgress />
-    </StyledSpinnerContainer>
+    </StyledDiv>
   );
 };
 

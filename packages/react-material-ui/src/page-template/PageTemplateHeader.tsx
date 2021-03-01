@@ -102,10 +102,16 @@ export const PageTemplateHeaderActions: React.FC<PageTemplateHeaderActionsProps>
   );
 };
 
-export const PageTemplateHeader: React.FC = props => {
-  const { children } = props;
+export const PageTemplateHeader: React.FC<React.ComponentProps<
+  typeof StyledHeader
+>> = ({ className, children, ...props }) => {
   return (
-    <StyledHeader className='page-template-header'>{children}</StyledHeader>
+    <StyledHeader
+      className={`page-template-header${className ? ` ${className}` : ''}`}
+      {...props}
+    >
+      {children}
+    </StyledHeader>
   );
 };
 

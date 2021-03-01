@@ -6,3 +6,5 @@ export * from './PageTemplateDashboard';
 export * from './PageTemplateHeader';
 export * from './PageTemplateNav';
 export * from './PageTemplateSpinner';
+export * from './PageTemplateStatusLabels';
+export * from './PageTemplateTitle';
