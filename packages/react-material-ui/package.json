@@ -1,6 +1,6 @@
 {
   "name": "@sierralabs/react-material-ui",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "Sierra Labs React Material UI Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
