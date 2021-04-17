@@ -7,11 +7,15 @@ import styled from 'styled-components';
 
 const StyledCardContent = styled(MuiCardContent)`
   &.primary {
-    background: ${props => props.theme.palette.primary.dark};
+    background: ${props =>
+      props.theme.cardContent?.background?.primary ||
+      props.theme.palette.primary.dark};
     color: ${props => props.theme.palette.primary.contrastText};
   }
   &.secondary {
-    background: ${props => props.theme.palette.secondary.dark};
+    background: ${props =>
+      props.theme.cardContent?.background?.secondary ||
+      props.theme.palette.secondary.dark};
     color: ${props => props.theme.palette.secondary.contrastText};
   }
 

@@ -13,7 +13,7 @@ export const components = [
   'AlertDialog',
   'ConfirmDialog',
   'AppSnackbar',
-  'Api',
+  'api',
   'SearchBox',
   'PageTemplate',
   'PageTemplateCardOver',
@@ -24,6 +24,7 @@ export const components = [
   'useApiGet',
   'useApiPost',
   'useApiPut',
+  'useApiPatch',
   'useApiDelete'
 ];
 
@@ -42,9 +43,11 @@ export const formikComponents = [
   'InlineFormContent',
   'InlineFormik',
   'InlineImage',
+  'InlineImageFit',
   'InlineNumberField',
   'InlineRadioGroup',
   'InlineSelectField',
+  'InlineMultiSelect',
   'InlineTextField'
 ];
 

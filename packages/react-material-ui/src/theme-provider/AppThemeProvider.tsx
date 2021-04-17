@@ -10,6 +10,32 @@ import {
   ThemeOptions
 } from '@material-ui/core/styles';
 
+declare module '@material-ui/core/styles/createMuiTheme' {
+  interface Theme {
+    pageTemplate?: {
+      headerBackground?: string;
+    };
+    cardContent?: {
+      background?: {
+        primary?: string;
+        secondary?: string;
+      };
+    };
+  }
+  // allow configuration using `createMuiTheme`
+  interface ThemeOptions {
+    pageTemplate?: {
+      headerBackground?: string;
+    };
+    cardContent?: {
+      background?: {
+        primary?: string;
+        secondary?: string;
+      };
+    };
+  }
+}
+
 export interface AppThemeProviderProps {
   theme?: ThemeOptions;
 }

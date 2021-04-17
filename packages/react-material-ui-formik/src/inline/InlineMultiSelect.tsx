@@ -17,6 +17,9 @@ const StyledGrid = styled(Grid)`
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+  .error-label {
+    color: ${props => props.theme.palette.error.main};
+  }
 `;
 
 export interface InlineMultiSelectOption {
@@ -28,13 +31,14 @@ export interface InlineMultiSelectProps {
   name: string;
   label: string;
   value?: string[];
+  error?: string;
   disabled?: boolean;
   options?: (InlineMultiSelectOption | string)[];
   grid?: GridProps;
 }
 
 export const InlineMultiSelect: React.FC<InlineMultiSelectProps> = props => {
-  let { label, name, disabled, options, grid, children } = props;
+  let { label, name, error, disabled, options, grid, children } = props;
   const formik = useFormikContext();
   const [field, meta, { setValue, setTouched }] = useField(props);
   if (!grid) {
@@ -45,7 +49,6 @@ export const InlineMultiSelect: React.FC<InlineMultiSelectProps> = props => {
     event: React.ChangeEvent<HTMLInputElement>,
     value: string
   ) => {
-    console.log('handleChange', value);
     // field.onChange(event);
     let values = [...field.value];
     if (values.includes(value)) {
@@ -61,7 +64,11 @@ export const InlineMultiSelect: React.FC<InlineMultiSelectProps> = props => {
   return useMemo(
     () => (
       <StyledGrid item className='inline-multi-select' {...grid}>
-        <Typography variant='h5' gutterBottom>
+        <Typography
+          variant='h5'
+          gutterBottom
+          className={error || meta.error ? 'error-label' : ''}
+        >
           {label}
         </Typography>
         <FormControl
@@ -105,7 +112,9 @@ export const InlineMultiSelect: React.FC<InlineMultiSelectProps> = props => {
               )}
             {children}
           </FormGroup>
-          {meta.error && <FormHelperText>{meta.error}</FormHelperText>}
+          {(error || meta.error) && (
+            <FormHelperText error>{error || meta.error}</FormHelperText>
+          )}
         </FormControl>
       </StyledGrid>
     ),

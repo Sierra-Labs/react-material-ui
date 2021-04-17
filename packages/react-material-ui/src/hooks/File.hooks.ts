@@ -29,6 +29,7 @@ export function useUploadFile(
     presignUrl
   } = useCreatePresignedUrl(path, presignEndPoint);
   const [progress, setProgress] = useState(0);
+  const [fileUrl, setFileUrl] = useState<string>();
   const [file, setFile] = useState<File>();
   const [response, setResponse] = useState<Response>();
   const [error, setError] = useState<Response>();
@@ -47,6 +48,7 @@ export function useUploadFile(
       request.upload.addEventListener('load', event => {
         setProgress(1);
         setIsUploading(false);
+        setFileUrl(presignedResult?.destinationUrl);
         setResponse(request.response);
       });
 
@@ -72,7 +74,8 @@ export function useUploadFile(
     [presignUrl]
   );
   return {
-    uploadedFile: { url: presignedResult?.destinationUrl, file },
+    fileUrl,
+    uploadedFile: file,
     isUploading,
     progress,
     response,

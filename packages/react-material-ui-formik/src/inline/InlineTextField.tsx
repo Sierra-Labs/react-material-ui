@@ -56,6 +56,7 @@ export type InlineTextFieldProps = {
   inputProps?: InputProps;
   disableFocusControls?: boolean;
   variant?: 'standard' | 'filled' | 'outlined';
+  maxLength?: number;
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -80,6 +81,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
     inputProps,
     disableFocusControls,
     variant = 'outlined' as any,
+    maxLength,
     onChange,
     onBlur
   } = props;
@@ -193,7 +195,9 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
               <Typography
                 variant='h5'
                 gutterBottom
-                className={error || meta.error ? 'error-label' : ''}
+                className={
+                  error || (meta.touched && meta.error) ? 'error-label' : ''
+                }
               >
                 {label}
               </Typography>
@@ -213,6 +217,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
               autoComplete='off'
               error={Boolean(error) || (meta.touched && Boolean(meta.error))}
               helperText={error || meta.error}
+              inputProps={{ maxLength }}
               InputProps={inputProps}
               onFocus={() => setFocus(true)}
               onChange={

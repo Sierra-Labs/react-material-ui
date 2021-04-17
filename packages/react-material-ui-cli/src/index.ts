@@ -63,7 +63,10 @@ const replaceImports = (sourceFile: SourceFile) => {
     }
   ];
   for (const declaration of declarations) {
-    if (!declaration.getModuleSpecifier().getText().includes('common')) {
+    if (
+      !declaration.getModuleSpecifier().getText().includes('common') &&
+      !declaration.getModuleSpecifier().getText().includes('../lib/api')
+    ) {
       // skip if import is not referencing the 'common' folder
       continue;
     }
@@ -75,7 +78,10 @@ const replaceImports = (sourceFile: SourceFile) => {
         declaration.removeDefaultImport();
       }
       for (const namedImport of namedImports) {
-        if (map.components.includes(namedImport.getName())) {
+        if (
+          !namedImport.wasForgotten() &&
+          map.components.includes(namedImport.getName())
+        ) {
           map.imports.push(namedImport.getText());
           namedImport.remove();
         }
@@ -121,6 +127,7 @@ const main = async () => {
   const sourceFiles = project.getSourceFiles();
   // console.log('sourceFiles', sourceFiles);
   for (const sourceFile of sourceFiles) {
+    console.log('sourceFile', sourceFile.getFilePath());
     replaceImports(sourceFile);
   }
 };

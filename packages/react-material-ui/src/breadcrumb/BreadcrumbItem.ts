@@ -1,4 +1,4 @@
 export interface BreadcrumbItem {
-  label: string;
+  label: string | JSX.Element;
   path?: string;
 }

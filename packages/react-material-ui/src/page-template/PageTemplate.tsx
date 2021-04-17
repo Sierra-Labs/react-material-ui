@@ -11,8 +11,13 @@ const StyledPageTemplate = styled.div`
   overflow: hidden;
   background: linear-gradient(
     to bottom,
-    ${props => props.theme.palette.primary.dark},
-    ${props => props.theme.palette.primary.dark} 117px,
+    ${props =>
+      props.theme.pageTemplate?.headerBackground ||
+      props.theme.palette.primary.dark},
+    ${props =>
+        props.theme.pageTemplate?.headerBackground ||
+        props.theme.palette.primary.dark}
+      117px,
     ${props => props.theme.palette.secondary.light} 0%
   );
   .page-template-header {
@@ -22,16 +27,26 @@ const StyledPageTemplate = styled.div`
   &.page-template-tabs {
     background: linear-gradient(
       to bottom,
-      ${props => props.theme.palette.primary.dark},
-      ${props => props.theme.palette.primary.dark} 117px,
+      ${props =>
+        props.theme.pageTemplate?.headerBackground ||
+        props.theme.palette.primary.dark},
+      ${props =>
+          props.theme.pageTemplate?.headerBackground ||
+          props.theme.palette.primary.dark}
+        117px,
       ${props => props.theme.palette.secondary.light} 0%
     );
   }
   &.card-over {
     background: linear-gradient(
       to bottom,
-      ${props => props.theme.palette.primary.dark},
-      ${props => props.theme.palette.primary.dark} 183px,
+      ${props =>
+        props.theme.pageTemplate?.headerBackground ||
+        props.theme.palette.primary.dark},
+      ${props =>
+          props.theme.pageTemplate?.headerBackground ||
+          props.theme.palette.primary.dark}
+        183px,
       ${props => props.theme.palette.secondary.light} 0%
     );
     .page-template-header {

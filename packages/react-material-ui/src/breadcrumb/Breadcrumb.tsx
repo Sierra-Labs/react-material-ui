@@ -4,25 +4,26 @@ import { useBreadcrumContext } from './BreadcrumbContext';
 import { BreadcrumbItem } from './BreadcrumbItem';
 
 export interface BreadcrumpProps {
-  breadcrumb: BreadcrumbItem;
+  label?: string | JSX.Element;
+  path?: string;
+  breadcrumb?: BreadcrumbItem;
 }
 
 export const Breadcrumb: React.FC<BreadcrumpProps> = ({
+  label,
+  path,
   breadcrumb,
   children
 }) => {
-  const {
-    breadcrumbs,
-    addBreadcrumb,
-    removeBreadcrumb
-  } = useBreadcrumContext();
+  const { addBreadcrumb, removeBreadcrumb } = useBreadcrumContext();
 
   useEffect(() => {
-    if (breadcrumb) {
-      addBreadcrumb(breadcrumb);
-      return () => removeBreadcrumb(breadcrumb);
+    const crumb = label ? { label, path } : breadcrumb;
+    if (crumb) {
+      addBreadcrumb(crumb);
+      return () => removeBreadcrumb(crumb);
     }
-  }, [breadcrumb, addBreadcrumb, removeBreadcrumb]);
+  }, [label, path, breadcrumb, addBreadcrumb, removeBreadcrumb]);
   return <>{children}</>;
 };
 

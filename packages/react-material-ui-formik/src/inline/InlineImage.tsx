@@ -149,9 +149,14 @@ export const InlineImage: React.FC<InlineImageProps> = ({
         s3Path={s3Path}
         onCancel={() => setOpen(false)}
         onUploaded={url => {
-          console.log('InlineImage.handleSubmit');
           setOpen(false);
           setValue(url);
+          setTouched(true);
+          formik.submitForm();
+        }}
+        onClear={() => {
+          setOpen(false);
+          setValue('');
           setTouched(true);
           formik.submitForm();
         }}
@@ -222,6 +227,7 @@ export interface InlineImageDialogProps {
   s3Path: string;
   open: boolean;
   onCancel: () => void;
+  onClear: () => void;
   onUploaded: (url: string) => void;
   title?: string;
   description?: string;
@@ -232,6 +238,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   s3Path,
   open,
   onCancel,
+  onClear,
   onUploaded,
   title,
   description,
@@ -241,22 +248,24 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   const onUploadedRef = useRef(onUploaded);
   const [file, setFile] = useState<File>();
   const [imageUrl, setImageUrl] = useState(value);
-  const { uploadedFile, isUploading, progress, error, upload } = useUploadFile(
+  const [isCleared, setIsCleared] = useState(false);
+  const { fileUrl, isUploading, progress, error, upload } = useUploadFile(
     s3Path,
     defaultPresignEndPoint
   );
 
   useEffect(() => {
-    if (uploadedFile?.url && progress === 1 && !isUploading) {
-      onUploadedRef.current(uploadedFile.url);
+    if (fileUrl && progress === 1 && !isUploading) {
+      onUploadedRef.current(fileUrl);
     }
-  }, [uploadedFile, isUploading, progress]);
+  }, [fileUrl, isUploading, progress]);
 
   const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files && files.length > 0) {
       const file = files[0];
       const dataUrl = await readImageFile(file);
+      setIsCleared(false);
       setFile(file);
       setImageUrl(dataUrl);
       if (resize) {
@@ -270,10 +279,6 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
         setImageUrl(image.src);
       }
     }
-  };
-  const handleClear = () => {
-    setFile(undefined);
-    setImageUrl(undefined);
   };
   return (
     <Dialog open={open} onClose={onCancel}>
@@ -295,7 +300,14 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
                 >
                   Change File
                 </StyledOverlayButton>
-                <StyledOverlayIconButton size='small' onClick={handleClear}>
+                <StyledOverlayIconButton
+                  size='small'
+                  onClick={() => {
+                    setFile(undefined);
+                    setImageUrl(undefined);
+                    setIsCleared(true);
+                  }}
+                >
                   <DeleteIcon />
                 </StyledOverlayIconButton>
               </div>
@@ -341,14 +353,20 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={onCancel}>Cancel</Button>
-        <Button
-          variant='contained'
-          color='primary'
-          disabled={!file || isUploading}
-          onClick={() => upload(file as File)}
-        >
-          Upload
-        </Button>
+        {isCleared ? (
+          <Button variant='contained' color='primary' onClick={() => onClear()}>
+            Clear Image
+          </Button>
+        ) : (
+          <Button
+            variant='contained'
+            color='primary'
+            disabled={!file || isUploading}
+            onClick={() => upload(file as File)}
+          >
+            Upload
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );

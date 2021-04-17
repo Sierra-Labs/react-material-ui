@@ -10,8 +10,10 @@ import { BreadcrumbItem } from './BreadcrumbItem';
  * Displays the current breadcrumb in the context
  */
 export const BreadcrumbHeading: React.FC<{
+  label?: string | JSX.Element;
+  path?: string;
   breadcrumb?: BreadcrumbItem;
-}> = ({ breadcrumb }) => {
+}> = ({ label, path, breadcrumb }) => {
   const {
     breadcrumbs,
     addBreadcrumb,
@@ -19,11 +21,12 @@ export const BreadcrumbHeading: React.FC<{
   } = useBreadcrumContext();
 
   useEffect(() => {
-    if (breadcrumb) {
-      addBreadcrumb(breadcrumb);
-      return () => removeBreadcrumb(breadcrumb);
+    const crumb = label ? { label, path } : breadcrumb;
+    if (crumb) {
+      addBreadcrumb(crumb);
+      return () => removeBreadcrumb(crumb);
     }
-  }, [breadcrumb, addBreadcrumb, removeBreadcrumb]);
+  }, [label, path, breadcrumb, addBreadcrumb, removeBreadcrumb]);
   return (
     <Breadcrumbs aria-label='breadcrumb'>
       {breadcrumbs.map(breadcrumb => (

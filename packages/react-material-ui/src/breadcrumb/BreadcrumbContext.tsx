@@ -38,11 +38,19 @@ const findBreadcrumbIndex = (
  * the methods for setting breadcrumb items.
  * @param props
  */
-export const BreadcrumbProvider: React.FC<{ initial?: BreadcrumbItem[] }> = ({
-  children,
-  initial = [] // default to empty array if not provided
+export const BreadcrumbProvider: React.FC<{
+  label?: string | JSX.Element;
+  path?: string;
+  initial?: BreadcrumbItem[];
+}> = ({
+  label,
+  path,
+  initial = [], // default to empty array if not provided
+  children
 }) => {
-  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>(initial);
+  const [breadcrumbs, setBreadcrumbs] = useState<BreadcrumbItem[]>(
+    label ? [{ label, path }, ...initial] : initial
+  );
   const addBreadcrumb = useCallback((breadcrumb: BreadcrumbItem) => {
     setBreadcrumbs(breadcrumbs => [...breadcrumbs, breadcrumb]);
   }, []);
