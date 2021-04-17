@@ -1,3 +1,4 @@
+export * from './InlineAutocomplete';
 export * from './InlineFile';
 export * from './InlineForm';
 export * from './InlineFormCard';

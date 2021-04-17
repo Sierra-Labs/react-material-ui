@@ -1,15 +1,16 @@
 import { useField } from 'formik';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 
 import {
+  CircularProgress,
   Grid,
   GridProps,
   TextField,
-  TextFieldProps,
-  CircularProgress
+  TextFieldProps
 } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+
 import { useDebounce } from '@sierralabs/react-material-ui';
 
 const StyledGrid = styled(Grid)`
@@ -28,6 +29,7 @@ export type FormikAutocompleteProps<T> = TextFieldProps & {
   name: string;
   grid?: GridProps;
   loading?: boolean;
+  freeSolo?: boolean;
   // Callback fired when searching (debounced)
   onSearch?: (value: string) => void;
   // Callback fired when the value changes.
@@ -66,20 +68,24 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
   let {
     onSearch,
     onChange,
+    onBlur,
     options,
     loading,
+    freeSolo,
     name,
     label,
     getOptionDisabled,
     getOptionSelected,
     getOptionLabel,
-    getSelectedValue,
+    getSelectedValue = (option: any) => option, // default to return option object
     filterOptions,
+    disabled,
     grid
   } = props;
   // Create a ref that store the onSearch handler
   const onSearchRef = useRef(onSearch);
   const mountedRef = useRef(false);
+  const freeSoloTimeoutRef = useRef<any>();
   // Update ref.current value if handler changes.
   // This allows our effect below to always get latest handler ...
   // ... without us needing to pass it in effect deps array ...
@@ -112,6 +118,8 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
       <Autocomplete
         open={open}
         // debug
+        value={field.value}
+        freeSolo={freeSolo}
         onOpen={() => setOpen(true)}
         onClose={() => setOpen(false)}
         getOptionDisabled={getOptionDisabled}
@@ -120,8 +128,8 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
         filterOptions={filterOptions}
         options={options}
         loading={loading}
+        disabled={disabled}
         onInputChange={(event, value, reason) => {
-          console.log('onInputChange', value);
           setSearch(value);
         }}
         onBlur={field.onBlur}
@@ -158,6 +166,18 @@ export const FormikAutocomplete: React.FC<FormikAutocompleteProps<
             onKeyPress={(event: any) =>
               event.key === 'Enter' && setForceSearch(true)
             }
+            onChange={event => {
+              if (freeSolo) {
+                event.persist();
+                clearTimeout(freeSoloTimeoutRef.current);
+                freeSoloTimeoutRef.current = setTimeout(() => {
+                  event.target.name = name;
+                  field.onChange(event);
+                  setTouched(false);
+                }, 300);
+              }
+            }}
+            onBlur={event => onBlur?.(event)}
           />
         )}
       />

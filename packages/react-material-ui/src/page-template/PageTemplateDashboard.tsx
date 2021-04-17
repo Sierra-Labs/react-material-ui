@@ -8,11 +8,16 @@ const StyledDiv = styled.div`
   overflow: auto;
   margin: 0 -30px;
   padding: 20px 30px 0 30px;
-`;
+` as React.FC<React.HTMLProps<HTMLDivElement>>;
 
-export const PageTemplateDashboard: React.FC = props => {
-  const { children } = props;
-  return <StyledDiv className='page-template-dashboard'>{children}</StyledDiv>;
+export const PageTemplateDashboard: React.FC<React.HTMLProps<
+  HTMLDivElement
+>> = ({ children, ...props }) => {
+  return (
+    <StyledDiv className='page-template-dashboard' {...props}>
+      {children}
+    </StyledDiv>
+  );
 };
 
 export default PageTemplateDashboard;

@@ -30,7 +30,7 @@ const StyledHeader = styled.div`
   }
   ${props => props.theme.breakpoints.down('sm')} {
     flex-wrap: wrap;
-    padding: 0;
+    padding: 24px 0 0 0;
     h1,
     h2,
     h3,
@@ -57,7 +57,7 @@ const StyledHeader = styled.div`
     .search-box {
       order: 5;
       flex: 100%;
-      margin: 30px 0 0 0;
+      margin: 10px 0 0 0;
       .search {
         padding: 12px;
         max-width: 100%;

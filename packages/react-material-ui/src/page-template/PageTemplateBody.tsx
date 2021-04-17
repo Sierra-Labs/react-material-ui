@@ -7,11 +7,17 @@ const StyledDiv = styled.div`
   flex-direction: column;
   overflow: auto;
   margin: 0 -30px;
-`;
+` as React.FC<React.HTMLProps<HTMLDivElement>>;
 
-export const PageTemplateBody: React.FC = props => {
-  const { children } = props;
-  return <StyledDiv className='page-template-body'>{children}</StyledDiv>;
+export const PageTemplateBody: React.FC<React.HTMLProps<HTMLDivElement>> = ({
+  children,
+  ...props
+}) => {
+  return (
+    <StyledDiv className='page-template-body' {...props}>
+      {children}
+    </StyledDiv>
+  );
 };
 
 export default PageTemplateBody;

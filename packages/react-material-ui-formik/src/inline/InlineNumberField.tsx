@@ -7,7 +7,7 @@ import { InputProps } from '@material-ui/core';
 
 type FormatFunction = (value: number | string) => string;
 
-export interface FormikNumberFieldRenderOptions {
+export interface InlineFormikNumberFieldRenderOptions {
   prefix?: string;
   suffix?: string;
   format?: string | FormatFunction;
@@ -24,8 +24,8 @@ export interface FormikNumberFieldRenderOptions {
   InputProps?: InputProps;
 }
 
-export const renderNumberFormatter: (
-  options: FormikNumberFieldRenderOptions
+const renderNumberFormatter: (
+  options: InlineFormikNumberFieldRenderOptions
 ) => React.FC<{
   inputRef: (instance: NumberFormat | null) => void;
   onChange: (event: { target: { name: string; value: string } }) => void;
@@ -99,7 +99,7 @@ export const renderNumberFormatter: (
 };
 
 export type InlineNumberFieldProps = InlineTextFieldProps &
-  FormikNumberFieldRenderOptions;
+  InlineFormikNumberFieldRenderOptions;
 
 export const InlineNumberField: React.FC<InlineNumberFieldProps> = ({
   type = 'tel', // force number input on mobile

@@ -1,64 +1,132 @@
-import React from 'react';
-import { Grid, GridProps } from '@material-ui/core';
-import { useField } from 'formik';
+import { useField, useFormikContext } from 'formik';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
+
+import { Grid, GridProps } from '@material-ui/core';
 import {
   KeyboardDatePicker,
   KeyboardDatePickerProps
 } from '@material-ui/pickers';
+import { MaterialUiPickersDate } from '@material-ui/pickers/typings/date';
 
 const StyledGrid = styled(Grid)`
   display: flex;
   flex-direction: column;
 `;
 
-export interface FormikDatePickerProps {
-  name: string;
-  label: string;
-  placeholder?: string;
-  grid?: GridProps;
-  birthdate?: boolean;
-  picker?: KeyboardDatePickerProps;
-}
+export const FormikDatePicker: React.FC<
+  Omit<KeyboardDatePickerProps, 'onChange'> & {
+    name: string;
+    label: string;
+    format?: string;
+    placeholder?: string;
+    grid?: GridProps;
+    birthdate?: boolean;
+  }
+> = ({
+  label,
+  name,
+  variant = 'inline',
+  inputVariant = 'outlined',
+  format = 'MM/dd/yyyy',
+  placeholder,
+  birthdate,
+  grid,
+  ...datePickerProps
+}) => {
+  const formik = useFormikContext();
+  const [field, meta, { setValue, setError, setTouched }] = useField(name);
+  const [lastSubmitCount, setLastSubmitCount] = useState(formik.submitCount);
+  const [previousValue, setPreviousValue] = useState(meta.initialValue);
+  const eventRef = useRef<React.ChangeEvent<any>>();
 
-export const FormikDatePicker: React.FC<FormikDatePickerProps> = props => {
-  let { label, name, placeholder, birthdate, picker, grid } = props;
-  const [field, meta, { setValue, setError, setTouched }] = useField(props);
   if (!grid) {
     // default field to expand entire width of form
     grid = { xs: 12 };
   }
-  const datePickerProps: Partial<KeyboardDatePickerProps> = { ...picker };
   if (birthdate) {
     datePickerProps.disableFuture = true;
     datePickerProps.openTo = 'year';
     datePickerProps.views = ['year', 'month', 'date'];
   }
+
+  // fix date input format
+  if (
+    field.value &&
+    typeof field.value === 'string' &&
+    field.value.match(/^\d{4}-\d{2}-\d{2}$/)
+  ) {
+    // fix date only fields (otherwise date offset by 1)
+    field.value = `${field.value}T00:00:00`;
+  }
+  // important: value cannot be empty string
+  const value = !isNaN(new Date(field.value).getTime()) ? field.value : null;
+
+  useEffect(() => {
+    // update previous value if initial value changes
+    setPreviousValue(meta.initialValue);
+  }, [meta.initialValue]);
+
+  useEffect(() => {
+    if (!formik.isSubmitting && lastSubmitCount !== formik.submitCount) {
+      // form finished submitting so set current value to previous value
+      setPreviousValue(meta.value);
+      setLastSubmitCount(formik.submitCount);
+    }
+  }, [formik.isSubmitting, formik.submitCount, lastSubmitCount, meta.value]);
+
+  const handleCancel = () => {
+    setTouched(false);
+    setValue(previousValue);
+  };
+
+  const handleChange = (date: MaterialUiPickersDate) => {
+    if (date && !isNaN(date.getTime())) {
+      setTouched(true);
+      // save date in ISO string format
+      setValue(date.toISOString());
+      if (eventRef.current) {
+        // tell formik the field changed
+        eventRef.current.target.value = date.toISOString();
+        field.onChange(eventRef.current);
+      }
+    }
+  };
+
   return (
     <StyledGrid item className='inline-text-field' {...grid}>
       <KeyboardDatePicker
         // autoOk
-        name={name}
-        label={label}
-        variant='inline'
-        inputVariant='outlined'
-        placeholder={placeholder}
-        format='MM/dd/yyyy'
         InputAdornmentProps={{ position: 'end' }}
         error={meta.touched && Boolean(meta.error)}
         helperText={meta.error}
-        value={field.value}
-        onChange={(date, value) => {
-          if (date) {
-            const saveDate = !isNaN(date.getTime());
-            setTouched(true);
-            setValue(saveDate ? date : value);
-          }
+        value={value}
+        onChange={(date, value) => handleChange(date)}
+        onAccept={date => {
+          // save when selecting from popup dialog
+          handleChange(date);
+          formik.submitForm();
         }}
         onError={error => {
           if (error !== meta.error) {
             setError(error);
           }
+        }}
+        onKeyDown={event => {
+          switch (event.key) {
+            case 'Escape':
+              return handleCancel();
+          }
+        }}
+        onFocus={event => {
+          // persist event to use for field.onChange()
+          event.persist();
+          eventRef.current = event;
+        }}
+        onBlur={event => {
+          // save on field blur
+          setTouched(true);
+          formik.submitForm();
         }}
         {...datePickerProps}
       />

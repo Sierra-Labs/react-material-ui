@@ -18,25 +18,34 @@ export const components = [
   'PageTemplate',
   'PageTemplateCardOver',
   'PageTemplateDashboard',
+  'PageTemplateBodyCard',
   'PageTemplateHeader',
   'PageTemplateHeaderActions',
+  'PageTemplateNav',
+  'PageTemplateSpinner',
   'PaginatedList',
   'useApiGet',
   'useApiPost',
   'useApiPut',
   'useApiPatch',
-  'useApiDelete'
+  'useApiDelete',
+  'useDebounce'
 ];
 
 /**
  * List of all react-material-ui-formik exported components
  */
 export const formikComponents = [
+  'diff',
   'FormikAutocomplete',
   'FormikButton',
   'FormikGrid',
   'FormikSelectField',
   'FormikTextField',
+  'FormikCheckboxField',
+  'FormikNumberField',
+  'FormikRadioGroup',
+  'InlineAutocomplete',
   'InlineFile',
   'InlineForm',
   'InlineFormCard',

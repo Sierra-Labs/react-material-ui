@@ -1,23 +1,24 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { CircularProgress } from '@material-ui/core';
+import { Box, BoxProps, CircularProgress } from '@material-ui/core';
 
-const StyledDiv = styled.div`
+const StyledDiv = styled(Box)`
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 1;
 `;
-export const PageTemplateSpinner: React.FC<React.ComponentProps<
-  typeof StyledDiv
->> = ({ className, ...props }) => {
+export const PageTemplateSpinner: React.FC<BoxProps> = ({
+  className,
+  ...props
+}) => {
   return (
     <StyledDiv
       className={`page-template-spinner${className ? ` ${className}` : ''}`}
       {...props}
     >
-      <CircularProgress />
+      <CircularProgress className='circular-progress' />
     </StyledDiv>
   );
 };

@@ -2,22 +2,28 @@ import React from 'react';
 import styled from 'styled-components';
 import { Paper } from '@material-ui/core';
 
-const StyledDiv = styled(Paper)`
+const StyledPaper = styled(Paper)`
   flex: 1;
   display: flex;
   flex-direction: column;
-  margin: 0 -30px;
   overflow: hidden;
-  border-radius: 0;
+  border-radius: 4px 4px 0 0;
   .MuiTableContainer-root {
     flex: 1;
     overflow: auto;
+  }
+  ${props => props.theme.breakpoints.down('sm')} {
+    border-radius: 0;
   }
 `;
 
 export const PageTemplateBodyCard: React.FC = props => {
   const { children } = props;
-  return <StyledDiv className='page-template-body'>{children}</StyledDiv>;
+  return (
+    <StyledPaper elevation={2} className='page-template-body'>
+      {children}
+    </StyledPaper>
+  );
 };
 
 export default PageTemplateBodyCard;
