@@ -8,5 +8,6 @@ export * from './page-template';
 export * from './search';
 export * from './snackbar';
 export * from './split-pane';
+export * from './status-label';
 export * from './theme-provider';
 export * from './vertical-stepper';

@@ -3,7 +3,9 @@ export const diff = (oldValue: any, newValue: any) => {
   if (oldValue === newValue) {
     return undefined; // oldValue and newValue are the same
   } else if (isEmpty(oldValue) && !isEmpty(newValue)) {
-    return newValue;
+    return newValue; // new value
+  } else if (!isEmpty(oldValue) && isEmpty(newValue)) {
+    return newValue; // clearing out out value
   } else if (isString(oldValue) && isString(newValue)) {
     return diffString(oldValue, newValue);
   } else if (isNumber(oldValue) && isNumber(newValue)) {
@@ -15,8 +17,8 @@ export const diff = (oldValue: any, newValue: any) => {
   } else if (isObject(oldValue) && isObject(newValue)) {
     return diffObject(oldValue, newValue);
   } else {
-    console.log('oldValue', oldValue);
-    console.log('newValue', newValue);
+    console.log('oldValue', oldValue, typeof oldValue);
+    console.log('newValue', newValue, typeof newValue);
     throw new Error(
       'parameters must be the same type (i.e. string, number, object, or array)'
     );
@@ -40,7 +42,13 @@ export const diffBoolean = (oldValue: boolean, newValue: boolean) => {
 export const diffObject = (oldValue: any, newValue: any) => {
   const result = Object.keys(newValue).reduce((result, key) => {
     const value = diff(oldValue[key], newValue[key]);
-    if (value || isString(value) || isNumber(value) || isBoolean(value)) {
+    if (
+      value ||
+      value === null ||
+      isString(value) ||
+      isNumber(value) ||
+      isBoolean(value)
+    ) {
       result[key] = value;
     }
     return result;

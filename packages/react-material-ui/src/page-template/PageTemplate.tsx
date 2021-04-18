@@ -2,6 +2,8 @@ import React, { ReactElement } from 'react';
 import styled from 'styled-components';
 import PageTemplateNav from './PageTemplateNav';
 import PageTemplateCardOver from './PageTemplateCardOver';
+import PageTemplateHeader from './PageTemplateHeader';
+import { SearchBox } from '../search';
 
 const StyledPageTemplate = styled.div`
   display: flex;
@@ -68,8 +70,11 @@ const StyledPageTemplate = styled.div`
   }
   ${props => props.theme.breakpoints.down('sm')} {
     padding: 0 10px;
+    &.search .page-template-header {
+      padding: 24px 0 0 0;
+    }
     .page-template-nav {
-      margin-top: 42px;
+      /* margin-top: 42px; */
     }
   }
 `;
@@ -82,7 +87,16 @@ export const PageTemplate: React.FC<{ className?: string }> = props => {
     // check if CardOverNav exists
     const reactElement = child as ReactElement;
     if (reactElement) {
-      if (reactElement.type === PageTemplateNav) {
+      if (reactElement.type === PageTemplateHeader) {
+        React.Children.map(
+          reactElement.props.children,
+          (child: ReactElement) => {
+            if (child?.type === SearchBox) {
+              className += ' search';
+            }
+          }
+        );
+      } else if (reactElement.type === PageTemplateNav) {
         className += ' page-template-tabs';
       } else if (reactElement.type === PageTemplateCardOver) {
         className += ' card-over';

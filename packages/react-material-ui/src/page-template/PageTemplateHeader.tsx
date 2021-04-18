@@ -30,7 +30,6 @@ const StyledHeader = styled.div`
   }
   ${props => props.theme.breakpoints.down('sm')} {
     flex-wrap: wrap;
-    padding: 24px 0 0 0;
     h1,
     h2,
     h3,
@@ -77,7 +76,6 @@ const StyledCardHeaderActions = styled.div`
   .MuiButton-label {
     overflow: hidden;
     text-overflow: ellipsis;
-    display: inline-block;
   }
   button {
     margin-right: 10px;

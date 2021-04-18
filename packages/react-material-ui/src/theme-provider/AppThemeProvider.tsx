@@ -4,37 +4,11 @@ import { ThemeProvider } from 'styled-components';
 import lightblue from '@material-ui/core/colors/lightBlue';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import {
-  createMuiTheme,
   MuiThemeProvider,
   StylesProvider,
   ThemeOptions
 } from '@material-ui/core/styles';
-
-declare module '@material-ui/core/styles/createMuiTheme' {
-  interface Theme {
-    pageTemplate?: {
-      headerBackground?: string;
-    };
-    cardContent?: {
-      background?: {
-        primary?: string;
-        secondary?: string;
-      };
-    };
-  }
-  // allow configuration using `createMuiTheme`
-  interface ThemeOptions {
-    pageTemplate?: {
-      headerBackground?: string;
-    };
-    cardContent?: {
-      background?: {
-        primary?: string;
-        secondary?: string;
-      };
-    };
-  }
-}
+import { createMuiTheme } from './createMuiTheme';
 
 export interface AppThemeProviderProps {
   theme?: ThemeOptions;

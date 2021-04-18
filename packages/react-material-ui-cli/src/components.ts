@@ -24,6 +24,7 @@ export const components = [
   'PageTemplateNav',
   'PageTemplateSpinner',
   'PaginatedList',
+  'StatusLabel',
   'useApiGet',
   'useApiPost',
   'useApiPut',
