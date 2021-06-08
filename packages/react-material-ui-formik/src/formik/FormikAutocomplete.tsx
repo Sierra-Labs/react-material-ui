@@ -25,7 +25,7 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
-export type FormikAutocompleteProps<T> = TextFieldProps & {
+export type FormikAutocompleteProps<T> = Omit<TextFieldProps, 'onChange'> & {
   name: string;
   grid?: GridProps;
   loading?: boolean;

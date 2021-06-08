@@ -81,6 +81,7 @@ export interface InlineFileProps {
   inputType?: string;
   grid?: GridProps;
   presignEndPoint?: string;
+  disabled?: boolean;
 }
 
 export const InlineFile: React.FC<InlineFileProps> = ({
@@ -90,6 +91,7 @@ export const InlineFile: React.FC<InlineFileProps> = ({
   uploadPath,
   inputType,
   presignEndPoint = defaultPresignEndPoint,
+  disabled,
   ...fieldProps // Note: fieldProps needs to have `name` prop
 }) => {
   if (!grid) {
@@ -196,11 +198,13 @@ export const InlineFile: React.FC<InlineFileProps> = ({
         color={dragover ? '#d3d3d3' : 'white'}
         onDragOver={event => {
           event.preventDefault();
+          if (disabled) return;
           setDragover(true);
         }}
-        onDragLeave={() => setDragover(false)}
+        onDragLeave={() => !disabled && setDragover(false)}
         onDrop={event => {
           event.preventDefault();
+          if (disabled) return;
           setDragover(false);
           handleFile(event.dataTransfer.files);
         }}
@@ -228,6 +232,7 @@ export const InlineFile: React.FC<InlineFileProps> = ({
                         <TableCell>
                           <IconButton
                             aria-label='delete'
+                            disabled={disabled}
                             onClick={() => {
                               // TODO: use ConfirmDialog
                               if (uploadFile) {
@@ -271,6 +276,7 @@ export const InlineFile: React.FC<InlineFileProps> = ({
                   className='drag-button'
                   variant='outlined'
                   color='primary'
+                  disabled={disabled}
                   onClick={() => fileInputRef.current?.click()}
                   startIcon={<AddIcon />}
                 >
@@ -297,6 +303,7 @@ export const InlineFile: React.FC<InlineFileProps> = ({
                 className='drag-button'
                 variant='outlined'
                 color='primary'
+                disabled={disabled}
                 onClick={() => fileInputRef.current?.click()}
               >
                 Select File
