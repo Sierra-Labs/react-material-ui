@@ -17,7 +17,7 @@ export interface InlineSelectFieldProps extends InlineTextFieldProps {
 export const InlineSelectField: React.FC<InlineSelectFieldProps> = props => {
   let { name, options, children } = props;
   const formik = useFormikContext();
-  const [field, meta, { setValue, setTouched }] = useField(name);
+  const [field, meta, { setTouched }] = useField(name);
   return useMemo(
     () => (
       <InlineTextField

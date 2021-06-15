@@ -29,6 +29,7 @@ export interface InlineRadioGroupOptions {
 export interface InlineRadioGroupProps {
   name: string;
   label?: string;
+  disabled?: boolean;
   isBoolean?: boolean;
   error?: string;
   options: (InlineRadioGroupOptions | string)[];
@@ -36,7 +37,7 @@ export interface InlineRadioGroupProps {
 }
 
 export const InlineRadioGroup: React.FC<InlineRadioGroupProps> = props => {
-  let { label, name, isBoolean, error, options, grid } = props;
+  let { label, name, disabled, isBoolean, error, options, grid } = props;
   const formik = useFormikContext();
   const [field, meta, { setValue }] = useField(props);
   if (!grid) {
@@ -80,6 +81,7 @@ export const InlineRadioGroup: React.FC<InlineRadioGroupProps> = props => {
                   value={option}
                   control={<Radio color='primary' />}
                   label={option}
+                  disabled={disabled}
                 />
               ) : (
                 <FormControlLabel
@@ -87,6 +89,7 @@ export const InlineRadioGroup: React.FC<InlineRadioGroupProps> = props => {
                   value={option.value}
                   control={<Radio color='primary' />}
                   label={option.label}
+                  disabled={disabled}
                 />
               )
             )}

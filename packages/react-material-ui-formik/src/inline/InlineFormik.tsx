@@ -60,10 +60,18 @@ export function InlineFormik<
   // cached values are updated prior to submitting to retain changes;
   // we don't want to keep updating initialValues as that will cause
   // UI re-render.
-  const [cachedValues, setCachedValues] = useState(initialValues);
+  const initialValuesRef = useRef(initialValues);
+  const cachedValuesRef = useRef<typeof initialValues>();
+  // const [cachedValues, setCachedValues] = useState(initialValues);
   useEffect(() => {
     // updated cached values if initial values change
-    setCachedValues(initialValues);
+    if (
+      !cachedValuesRef.current ||
+      JSON.stringify(initialValuesRef.current) !== JSON.stringify(initialValues)
+    ) {
+      initialValuesRef.current = initialValues;
+      cachedValuesRef.current = initialValues;
+    }
   }, [initialValues]);
   useEffect(() => {
     if (formikRef && formikRef.current) {
@@ -103,12 +111,12 @@ export function InlineFormik<
       enableReinitialize
       initialValues={initialValues}
       onSubmit={(values: Values, formikHelpers: FormikHelpers<Values>) => {
-        // console.log('InlineFormik onSubmit', cachedValues, values);
+        const cachedValues = cachedValuesRef.current;
         const valuesDiff = diff(cachedValues, values);
         if (valuesDiff) {
           // set the cached values to prevent resubmitting the form; this
           // helps if saving is slow and user is making fast changes
-          setCachedValues(values);
+          cachedValuesRef.current = values;
           // only submit diff changes for inline form sbimission
           onSubmit(valuesDiff as Values, formikHelpers);
         } else if (formikRef && formikRef.current) {
