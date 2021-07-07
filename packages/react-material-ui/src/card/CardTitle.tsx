@@ -8,7 +8,9 @@ const StyledCardTitleTypography = styled(Typography)`
   align-items: center;
   /* margin-bottom: 10px; */
   padding: 16px 16px 0 16px;
-  .MuiSvgIcon-root {
+  .MuiSvgIcon-root,
+  .MuiIcon-root,
+  .icon {
     margin-right: 10px;
   }
 `;

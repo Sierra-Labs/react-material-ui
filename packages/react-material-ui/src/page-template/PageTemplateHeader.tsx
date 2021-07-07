@@ -13,19 +13,26 @@ const StyledHeader = styled.div`
   h3,
   h4 {
     margin: 0;
-    color: #fff;
+    color: ${props =>
+      props.theme.pageTemplate?.headerText ||
+      props.theme.palette.primary.contrastText};
   }
   h2 {
     font-size: 22px;
   }
   .subtitle {
     margin-top: 4px;
-    color: rgba(255, 255, 255, 0.8);
+    color: ${props =>
+      props.theme.pageTemplate?.headerText ||
+      props.theme.palette.primary.contrastText};
   }
   a {
-    color: #fff;
+    color: ${props =>
+      props.theme.pageTemplate?.headerLink ||
+      props.theme.pageTemplate?.headerText ||
+      props.theme.palette.primary.contrastText};
     &:hover {
-      color: ${blue[100]};
+      color: ${props => props.theme.pageTemplate?.headerHoverLink || blue[100]};
     }
   }
   ${props => props.theme.breakpoints.down('sm')} {

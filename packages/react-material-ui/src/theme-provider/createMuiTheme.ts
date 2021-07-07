@@ -9,6 +9,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     pageTemplate?: {
       headerBackground?: string;
+      headerText?: string;
+      headerLink?: string;
+      headerHoverLink?: string;
     };
     cardContent?: {
       background?: {
@@ -27,6 +30,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   interface ThemeOptions {
     pageTemplate?: {
       headerBackground?: string;
+      headerText?: string;
+      headerLink?: string;
+      headerHoverLink?: string;
     };
     cardContent?: {
       background?: {
