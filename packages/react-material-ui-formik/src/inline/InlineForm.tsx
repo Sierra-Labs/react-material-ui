@@ -1,4 +1,4 @@
-import React, { ElementType } from 'react';
+import React, { ComponentProps, ElementType } from 'react';
 import { Grid, GridProps } from '@material-ui/core';
 import { Form } from 'formik';
 import styled from 'styled-components';
@@ -12,9 +12,11 @@ const StyledInlineFormGrid = styled(Grid)`
   h5 {
     font-size: 14px;
   }
-` as React.FC<InlineFormCardProps>;
+`;
 
-export const InlineForm: React.FC<InlineFormCardProps> = props => {
+export const InlineForm: React.FC<
+  ComponentProps<typeof StyledInlineFormGrid> & InlineFormCardProps
+> = props => {
   const { spacing = 2, children } = props;
   return (
     <StyledInlineFormGrid

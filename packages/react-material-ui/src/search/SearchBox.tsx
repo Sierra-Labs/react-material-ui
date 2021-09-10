@@ -25,7 +25,11 @@ export interface SearchBoxProps {
   onSearch?: (event: any) => void;
 }
 
-export const SearchBox: React.FC<SearchBoxProps> = ({ value, onSearch }) => {
+export const SearchBox: React.FC<SearchBoxProps> = ({
+  value,
+  children,
+  onSearch
+}) => {
   // Create a ref that store the onSearch handler
   const searchHandler = useRef<(event: any) => void>();
   // Update ref.current value if handler changes.
@@ -64,6 +68,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ value, onSearch }) => {
           }
         />
       </Paper>
+      {children}
     </StyledSearchBox>
   );
 };
