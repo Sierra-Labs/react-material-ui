@@ -19,3 +19,11 @@ $ yarn install
 $ yarn build
 $ yarn dev
 ```
+
+## Publishing
+
+To publish package to npm repo
+
+```
+yarn run publish
+```
