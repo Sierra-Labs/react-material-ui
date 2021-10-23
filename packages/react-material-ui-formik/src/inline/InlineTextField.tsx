@@ -16,7 +16,8 @@ import {
   // Button,
   ClickAwayListener,
   ButtonGroup,
-  Button
+  Button,
+  TextFieldProps
 } from '@material-ui/core';
 
 const StyledGrid = styled(Grid)`
@@ -42,7 +43,7 @@ const StyledGrid = styled(Grid)`
   }
 `;
 
-export type InlineTextFieldProps = {
+export type InlineTextFieldProps = TextFieldProps & {
   name: string;
   label?: string;
   type?: string;
@@ -57,6 +58,7 @@ export type InlineTextFieldProps = {
   disableFocusControls?: boolean;
   variant?: 'standard' | 'filled' | 'outlined';
   maxLength?: number;
+  overrideBlur?: boolean; // used by InlineNumberField to override default onBlur from number formatter
   onChange?: (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => void;
@@ -65,29 +67,30 @@ export type InlineTextFieldProps = {
   ) => void;
 };
 
-export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
-  let {
-    children,
-    multiline,
-    select,
-    label,
-    name,
-    type,
-    value,
-    placeholder,
-    error,
-    disabled,
-    grid,
-    inputProps,
-    disableFocusControls,
-    variant = 'outlined' as any,
-    maxLength,
-    onChange,
-    onBlur
-  } = props;
+export const InlineTextField: React.FC<InlineTextFieldProps> = ({
+  children,
+  multiline,
+  select,
+  label,
+  name,
+  type,
+  value,
+  placeholder,
+  error,
+  disabled,
+  grid,
+  inputProps,
+  disableFocusControls,
+  variant = 'outlined' as any,
+  maxLength,
+  overrideBlur,
+  onChange,
+  onBlur,
+  ...props
+}) => {
   // console.log('InlineTextField render name', name, value);
   const formik = useFormikContext();
-  const [field, meta, { setValue, setTouched }] = useField(props);
+  const [field, meta, { setValue, setTouched }] = useField(name);
   const [focus, setFocus] = useState(false);
   const [lastSubmitCount, setLastSubmitCount] = useState(formik.submitCount);
   const [previousValue, setPreviousValue] = useState(meta.initialValue);
@@ -112,7 +115,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
   }, [formik.isSubmitting, formik.submitCount, lastSubmitCount, meta.value]);
 
   const handleSubmit = () => {
-    console.log('handleSubmit');
+    // console.log('handleSubmit');
     setTouched(true);
     setFocus(false);
     formik.submitForm();
@@ -203,6 +206,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
               </Typography>
             )}
             <TextField
+              {...props}
               variant={variant}
               type={type}
               // size='small'
@@ -223,7 +227,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
               onChange={
                 onChange ||
                 (event => {
-                  console.log('inline text field change');
+                  // console.log('inline text field change');
                   field.onChange(event);
                   // if editing disabled touched until blur
                   setTouched(false);
@@ -240,7 +244,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = props => {
                 }
               }}
               onBlur={
-                onBlur ||
+                !overrideBlur && onBlur ? onBlur :
                 (event => {
                   if (event.relatedTarget === cancelButtonRef.current) {
                     handleCancel();

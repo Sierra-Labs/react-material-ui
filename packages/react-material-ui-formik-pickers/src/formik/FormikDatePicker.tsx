@@ -15,13 +15,15 @@ const StyledGrid = styled(Grid)`
 `;
 
 export const FormikDatePicker: React.FC<
-  Omit<KeyboardDatePickerProps, 'onChange'> & {
+  Omit<KeyboardDatePickerProps, 'onChange' | 'value'> & {
     name: string;
     label: string;
     format?: string;
     placeholder?: string;
     grid?: GridProps;
     birthdate?: boolean;
+    dateOnly?: boolean;
+    value?: Date | null;
   }
 > = ({
   label,
@@ -31,7 +33,9 @@ export const FormikDatePicker: React.FC<
   format = 'MM/dd/yyyy',
   placeholder,
   birthdate,
+  dateOnly,
   grid,
+  value,
   ...datePickerProps
 }) => {
   const formik = useFormikContext();
@@ -60,7 +64,7 @@ export const FormikDatePicker: React.FC<
     field.value = `${field.value}T00:00:00`;
   }
   // important: value cannot be empty string
-  const value = !isNaN(new Date(field.value).getTime()) ? field.value : null;
+  value = value || !isNaN(new Date(field.value).getTime()) ? field.value : null;
 
   useEffect(() => {
     // update previous value if initial value changes
@@ -90,25 +94,36 @@ export const FormikDatePicker: React.FC<
         eventRef.current.target.value = date.toISOString();
         field.onChange(eventRef.current);
       }
+    } else if (date === null) {
+      setTouched(true);
+      setValue(date);
+      if (eventRef.current) {
+        // tell formik the field changed
+        eventRef.current.target.value = date;
+        field.onChange(eventRef.current);
+      }
     }
   };
-
   return (
     <StyledGrid item className='inline-text-field' {...grid}>
       <KeyboardDatePicker
         // autoOk
+        inputVariant={inputVariant}
         InputAdornmentProps={{ position: 'end' }}
+        format={format || 'MM/dd/yyyy'}
+        label={label}
+        placeholder={placeholder}
         error={meta.touched && Boolean(meta.error)}
         helperText={meta.error}
+        variant={variant}
         value={value}
         onChange={(date, value) => handleChange(date)}
         onAccept={date => {
-          // save when selecting from popup dialog
           handleChange(date);
-          formik.submitForm();
         }}
         onError={error => {
-          if (error !== meta.error) {
+          // only bubble KeyboardDatePicker error if no formik yup error
+          if (error && !meta.error) {
             setError(error);
           }
         }}
@@ -124,9 +139,7 @@ export const FormikDatePicker: React.FC<
           eventRef.current = event;
         }}
         onBlur={event => {
-          // save on field blur
           setTouched(true);
-          formik.submitForm();
         }}
         {...datePickerProps}
       />

@@ -1,40 +1,49 @@
 import { useField } from 'formik';
 import React from 'react';
-import NumberFormat from 'react-number-format';
+import NumberFormat, { NumberFormatProps } from 'react-number-format';
+import styled from 'styled-components';
 
-import FormikTextField, { FormikTextFieldProps } from './FormikTextField';
+import { Grid, TextField } from '@material-ui/core';
 
-type FormatFunction = (value: string) => string;
+import { FormikTextFieldProps } from './FormikTextField';
 
-export interface FormikNumberFieldRenderOptions {
-  prefix?: string;
-  suffix?: string;
-  format?: string | FormatFunction;
-  phoneNumber?: boolean;
-  creditcard?: boolean;
-  allowLeadingZero?: boolean;
-  mask?: string;
-  length?: number;
-  min?: number;
-  max?: number;
-}
+const StyledGrid = styled(Grid)`
+  display: flex;
+  flex-direction: column;
+`;
 
-const renderNumberFormatter: (
-  options: FormikNumberFieldRenderOptions
-) => React.FC<{
-  inputRef: (instance: NumberFormat | null) => void;
-  onChange: (event: { target: { name: string; value: string } }) => void;
-  name: string;
-}> = ({
+export type FormikNumberFieldProps = Omit<
+  FormikTextFieldProps,
+  'multiline' | 'multiple' | 'ref'
+> &
+  NumberFormatProps & {
+    currency?: boolean;
+    phoneNumber?: boolean;
+    creditcard?: boolean;
+    length?: number;
+    min?: number;
+    max?: number;
+  };
+
+export const FormikNumberField: React.FC<FormikNumberFieldProps> = ({
+  name,
+  type = 'tel', // force number input on mobile
+  prefix,
   format,
   phoneNumber,
   creditcard,
-  allowLeadingZero,
   length,
   min,
   max,
-  ...numberFormatProps
+  isNumericString,
+  thousandSeparator,
+  currency,
+  grid = { xs: 12 },
+  helperText,
+  variant = 'outlined',
+  ...props
 }) => {
+  const [field, meta, { setValue }] = useField(name);
   if (creditcard) {
     format = '#### #### #### ####';
   } else if (phoneNumber) {
@@ -44,64 +53,48 @@ const renderNumberFormatter: (
     //     value.length < length
     //       ? [...Array(length - value.length + 1)].join('0') + value
     //       : value;
+  } else if (currency) {
+    // TODO: implement props to customize as well as context to theme globally
+    prefix = '$';
+    thousandSeparator = true;
   } else if (!format && length) {
     format = [...Array(length + 1)].join('#');
+    if (prefix) format = prefix + format;
   }
-  return ({ inputRef, onChange, name, ...fieldProps }) => {
-    return (
-      <NumberFormat
-        {...numberFormatProps}
-        {...fieldProps}
-        name={name}
-        format={format}
-        allowLeadingZeros={allowLeadingZero}
-        getInputRef={inputRef}
-        onValueChange={values => {
-          onChange({
-            target: { name, value: values.value }
-          });
-        }}
-      />
-    );
-  };
-};
-
-export type FormikNumberFieldProps = FormikTextFieldProps &
-  FormikNumberFieldRenderOptions;
-
-export const FormikNumberField: React.FC<FormikNumberFieldProps> = ({
-  type = 'tel', // force number input on mobile
-  prefix,
-  suffix,
-  format,
-  phoneNumber,
-  creditcard,
-  allowLeadingZero,
-  mask,
-  length,
-  min,
-  max,
-  ...textFieldProps
-}) => {
   return (
-    <FormikTextField
-      type={type}
-      InputProps={{
-        inputComponent: renderNumberFormatter({
-          prefix,
-          suffix,
-          format,
-          phoneNumber,
-          creditcard,
-          allowLeadingZero,
-          mask,
-          length,
-          min,
-          max
-        }) as any
-      }}
-      {...textFieldProps}
-    />
+    <StyledGrid item className='formik-text-field' {...grid}>
+      <NumberFormat
+        {...props}
+        type={type}
+        prefix={prefix}
+        variant={variant}
+        format={format}
+        min={min}
+        max={max}
+        value={field.value}
+        thousandSeparator={thousandSeparator}
+        isNumericString={isNumericString}
+        onValueChange={values => {
+          // determine if we should return a number or a string
+          let value: any = values.floatValue;
+          if (typeof field?.value === 'number' || field?.value === null) {
+            // must return a number otherwise `diff()` will break
+            value =
+              typeof values.floatValue === 'number' ? values.floatValue : null;
+          } else {
+            value = values.value || null;
+          }
+          if (isNumericString) {
+            value = `${value}`;
+          }
+          setValue(value);
+        }}
+        customInput={TextField}
+        error={meta.touched && Boolean(meta.error)}
+        helperText={meta.error || helperText}
+        name={name}
+      />
+    </StyledGrid>
   );
 };
 

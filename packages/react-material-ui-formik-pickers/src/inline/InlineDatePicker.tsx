@@ -84,7 +84,6 @@ export const InlineDatePicker: React.FC<InlineDatePickerProps> = props => {
   };
 
   const handleChange = (date: MaterialUiPickersDate) => {
-    console.log('handleChange', date);
     if (date && !isNaN(date.getTime())) {
       setTouched(true);
       // save date in ISO string format

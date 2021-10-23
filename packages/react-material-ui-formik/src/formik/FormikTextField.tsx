@@ -26,7 +26,7 @@ export type FormikTextFieldProps = TextFieldProps & {
 
 export const FormikTextField: React.FC<FormikTextFieldProps> = props => {
   let { variant, type } = props;
-  let { name, grid, ...textFieldProps } = props;
+  let { name, grid, helperText, ...textFieldProps } = props;
   const [field, meta] = useField(name);
   const [showPassword, setShowPassword] = React.useState(false);
 
@@ -52,7 +52,7 @@ export const FormikTextField: React.FC<FormikTextFieldProps> = props => {
         variant={variant || ('outlined' as any)}
         autoComplete='off'
         error={meta.touched && Boolean(meta.error)}
-        helperText={meta.error}
+        helperText={meta.error || helperText}
         type={type === 'password' ? (showPassword ? 'text' : 'password') : type}
         InputProps={{
           endAdornment: (

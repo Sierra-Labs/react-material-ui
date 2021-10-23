@@ -10,9 +10,9 @@ export interface InlineSelectFieldOptions {
   label: string;
 }
 
-export interface InlineSelectFieldProps extends InlineTextFieldProps {
+export type InlineSelectFieldProps = InlineTextFieldProps & {
   options?: (InlineSelectFieldOptions | string)[];
-}
+};
 
 export const InlineSelectField: React.FC<InlineSelectFieldProps> = props => {
   let { name, options, children } = props;
