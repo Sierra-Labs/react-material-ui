@@ -54,7 +54,6 @@ export type InlineTextFieldProps = TextFieldProps & {
   select?: boolean;
   placeholder?: string;
   grid?: GridProps;
-  inputProps?: InputProps;
   disableFocusControls?: boolean;
   variant?: 'standard' | 'filled' | 'outlined';
   maxLength?: number;
@@ -79,7 +78,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
   error,
   disabled,
   grid,
-  inputProps,
+  InputProps,
   disableFocusControls,
   variant = 'outlined' as any,
   maxLength,
@@ -133,10 +132,10 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
     return classes.join(' ');
   };
 
-  inputProps = useMemo(() => {
+  InputProps = useMemo(() => {
     if (!meta.error && formik.isSubmitting && meta.value !== previousValue) {
       return {
-        ...inputProps,
+        ...InputProps,
         endAdornment: (
           <InputAdornment position='end' className={getAdornmentClasses()}>
             <CircularProgress color='primary' size={25} />
@@ -145,7 +144,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
       };
     } else if (focus && !disableFocusControls) {
       return {
-        ...inputProps,
+        ...InputProps,
         endAdornment: (
           <InputAdornment position='end' className={getAdornmentClasses()}>
             <ButtonGroup
@@ -172,7 +171,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
         )
       };
     } else {
-      return inputProps;
+      return InputProps;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -222,7 +221,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
               error={Boolean(error) || (meta.touched && Boolean(meta.error))}
               helperText={error || meta.error}
               inputProps={{ maxLength }}
-              InputProps={inputProps}
+              InputProps={InputProps}
               onFocus={() => setFocus(true)}
               onChange={
                 onChange ||
@@ -266,7 +265,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
       meta.error,
       meta.touched,
       focus,
-      inputProps,
+      InputProps,
       select,
       type,
       label,
