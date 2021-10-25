@@ -14,7 +14,8 @@ export const defaultPresignEndPoint = 'files/presign';
 
 export function useSecureFileUrl(url?: string) {
   if (url) {
-    return `${url}&token=${api.getAccessToken()}`;
+    const querySpacing = url.includes('?') ? '&' : '?';
+    return `${url}${querySpacing}token=${api.getAccessToken()}`;
   }
 }
 
