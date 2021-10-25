@@ -150,9 +150,13 @@ export const InlineImage: React.FC<InlineImageProps> = ({
         onCancel={() => setOpen(false)}
         onUploaded={url => {
           setOpen(false);
-          setValue(url);
           setTouched(true);
-          formik.submitForm();
+          // delay URL as S3 take some time to make URL available after
+          // upload
+          setTimeout(() => {
+            setValue(url);
+            formik.submitForm();
+          }, 300);
         }}
         onClear={() => {
           setOpen(false);
@@ -170,7 +174,10 @@ export const InlineImage: React.FC<InlineImageProps> = ({
 
 export default InlineImage;
 
-const StyledDragArea = styled.div`
+const StyledDragArea = styled.div.attrs(props => ({
+  color: props.color || 'white'
+}))`
+  background-color: ${props => props.color};
   position: relative;
   height: 300px;
   border: solid 1px #ccc;
@@ -226,6 +233,7 @@ export interface InlineImageDialogProps {
   value?: string;
   s3Path: string;
   open: boolean;
+  disabled?: boolean;
   onCancel: () => void;
   onClear: () => void;
   onUploaded: (url: string) => void;
@@ -237,6 +245,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   value,
   s3Path,
   open,
+  disabled,
   onCancel,
   onClear,
   onUploaded,
@@ -245,6 +254,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   resize
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [dragover, setDragover] = useState(false);
   const onUploadedRef = useRef(onUploaded);
   const [file, setFile] = useState<File>();
   const [imageUrl, setImageUrl] = useState(value);
@@ -260,8 +270,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
     }
   }, [fileUrl, isUploading, progress]);
 
-  const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
+  const handleFile = async (files: FileList | null) => {
     if (files && files.length > 0) {
       const file = files[0];
       const dataUrl = await readImageFile(file);
@@ -285,7 +294,22 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
       <DialogTitle>{title || 'Upload Image'}</DialogTitle>
       {description && <DialogContent>{description}</DialogContent>}
       <DialogContent>
-        <StyledDragArea>
+        <StyledDragArea
+          className='drag-area'
+          color={dragover ? '#d3d3d3' : 'white'}
+          onDragOver={event => {
+            event.preventDefault();
+            if (disabled) return;
+            setDragover(true);
+          }}
+          onDragLeave={() => !disabled && setDragover(false)}
+          onDrop={event => {
+            event.preventDefault();
+            if (disabled) return;
+            setDragover(false);
+            handleFile(event.dataTransfer.files);
+          }}
+        >
           {imageUrl ? (
             <Fragment>
               <img src={imageUrl} alt='selected file to upload' />
@@ -332,7 +356,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
             type='file'
             accept='image/*'
             ref={fileInputRef}
-            onChange={handleFile}
+            onChange={event => handleFile(event.target.files)}
           />
         </StyledDragArea>
         {isUploading && (

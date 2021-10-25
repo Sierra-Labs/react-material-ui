@@ -63,6 +63,7 @@ export const InlineNumberField: React.FC<InlineNumberFieldProps> = ({
       format={format}
       min={min}
       max={max}
+      grid={grid}
       value={field.value}
       thousandSeparator={thousandSeparator}
       isNumericString={isNumericString}
