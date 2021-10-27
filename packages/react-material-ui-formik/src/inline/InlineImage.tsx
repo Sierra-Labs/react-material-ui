@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -103,6 +104,7 @@ export interface InlineImageProps {
   description?: string;
   disabled?: boolean;
   resize?: InlineImageResize;
+  backgroundColor?: string;
 }
 
 export const InlineImage: React.FC<InlineImageProps> = ({
@@ -114,16 +116,51 @@ export const InlineImage: React.FC<InlineImageProps> = ({
   title,
   description,
   disabled,
-  resize
+  resize,
+  backgroundColor
 }) => {
   if (!grid) {
     // default field to expand entire width of form
     grid = { xs: 12 };
   }
   const [open, setOpen] = useState(false);
+  const [image, setImage] = useState<HTMLImageElement>();
+  const [loading, setLoading] = useState(false);
   const formik = useFormikContext();
   const [field, meta, { setValue, setTouched }] = useField(name);
   const secureUrl = useSecureFileUrl(field.value);
+  // load the image with retry logic in case S3 hasn't made file available
+  useEffect(() => {
+    if (secureUrl) {
+      setLoading(true);
+      const image = new Image()
+      image.onload = () => {
+        setImage(image);
+        setLoading(false);
+      };
+      let count = 0;
+      let timeout: any;
+      image.onerror = () => {
+        // retry up to 10 times
+        if (count < 10) {
+          count++;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            image.src = secureUrl;
+          }, 500);
+        } else {
+          // stop retrying
+          setLoading(false);
+        }
+      };
+      // start image load
+      image.src = secureUrl;
+      // on unmount stop retrying
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [secureUrl]);
   return (
     <StyledGrid item className='inline-text-field' {...grid}>
       <Typography variant='h5' gutterBottom>
@@ -133,12 +170,14 @@ export const InlineImage: React.FC<InlineImageProps> = ({
         <Button
           variant='text'
           color='primary'
+          className='button'
+          style={{backgroundColor}}
           onClick={() => setOpen(true)}
           disabled={disabled}
         >
-          {secureUrl ? (
+          {!loading && image && secureUrl ? (
             <img src={secureUrl} alt={field.value} className='image' />
-          ) : (
+          ) : loading ? <CircularProgress size={20} /> : (
             'Upload Image'
           )}
         </Button>
@@ -153,10 +192,8 @@ export const InlineImage: React.FC<InlineImageProps> = ({
           setTouched(true);
           // delay URL as S3 take some time to make URL available after
           // upload
-          setTimeout(() => {
-            setValue(url);
-            formik.submitForm();
-          }, 300);
+          setValue(url);
+          formik.submitForm();
         }}
         onClear={() => {
           setOpen(false);
@@ -175,7 +212,7 @@ export const InlineImage: React.FC<InlineImageProps> = ({
 export default InlineImage;
 
 const StyledDragArea = styled.div.attrs(props => ({
-  color: props.color || 'white'
+  color: props.color || '#f4f4f4'
 }))`
   background-color: ${props => props.color};
   position: relative;
