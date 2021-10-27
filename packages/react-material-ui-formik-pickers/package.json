@@ -1,6 +1,6 @@
 {
   "name": "@sierralabs/react-material-ui-formik-pickers",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "Sierra React Material UI Formik Date Picker Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,7 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/pickers": "^3.2.10",
     "@sierralabs/react-material-ui": "^0.2.8",
-    "@sierralabs/react-material-ui-formik": "^0.2.8",
+    "@sierralabs/react-material-ui-formik": "^0.2.9",
     "@types/node": "^14.11.2",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
