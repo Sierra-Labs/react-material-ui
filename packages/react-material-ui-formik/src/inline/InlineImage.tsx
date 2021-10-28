@@ -133,7 +133,7 @@ export const InlineImage: React.FC<InlineImageProps> = ({
   useEffect(() => {
     if (secureUrl) {
       setLoading(true);
-      const image = new Image()
+      const image = new Image();
       image.onload = () => {
         setImage(image);
         setLoading(false);
@@ -171,13 +171,15 @@ export const InlineImage: React.FC<InlineImageProps> = ({
           variant='text'
           color='primary'
           className='button'
-          style={{backgroundColor}}
+          style={{ backgroundColor }}
           onClick={() => setOpen(true)}
           disabled={disabled}
         >
           {!loading && image && secureUrl ? (
             <img src={secureUrl} alt={field.value} className='image' />
-          ) : loading ? <CircularProgress size={20} /> : (
+          ) : loading ? (
+            <CircularProgress size={20} />
+          ) : (
             'Upload Image'
           )}
         </Button>
@@ -190,10 +192,12 @@ export const InlineImage: React.FC<InlineImageProps> = ({
         onUploaded={url => {
           setOpen(false);
           setTouched(true);
+          setValue(url);
           // delay URL as S3 take some time to make URL available after
           // upload
-          setValue(url);
-          formik.submitForm();
+          setTimeout(() => {
+            formik.submitForm();
+          }, 300);
         }}
         onClear={() => {
           setOpen(false);
