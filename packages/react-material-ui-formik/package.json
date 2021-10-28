@@ -1,6 +1,6 @@
 {
   "name": "@sierralabs/react-material-ui-formik",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Sierra React Material UI Formik Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -29,7 +29,7 @@
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.40",
-    "@sierralabs/react-material-ui": "^0.2.8",
+    "@sierralabs/react-material-ui": "^0.2.11",
     "@types/node": "^14.11.2",
     "@types/react": "^16.9.50",
     "@types/react-dom": "^16.9.8",
