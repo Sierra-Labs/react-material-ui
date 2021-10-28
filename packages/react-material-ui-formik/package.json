@@ -1,6 +1,6 @@
 {
   "name": "@sierralabs/react-material-ui-formik",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Sierra React Material UI Formik Library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
