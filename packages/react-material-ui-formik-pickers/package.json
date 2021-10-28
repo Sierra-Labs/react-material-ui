@@ -20,7 +20,7 @@
   "author": "Sierra Labs",
   "license": "Sierra Labs",
   "engines": {
-    "node": "12.14.0"
+    "node": ">=12.14.0"
   },
   "eslintConfig": {
     "extends": "react-app"
