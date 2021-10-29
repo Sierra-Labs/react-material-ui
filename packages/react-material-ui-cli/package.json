@@ -1,6 +1,6 @@
 {
   "name": "@sierralabs/react-material-ui-cli",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Sierra Labs React Material UI CLI",
   "author": "Sierra Labs",
   "license": "Sierra Labs",
@@ -12,7 +12,7 @@
     "dist"
   ],
   "engines": {
-    "node": "12.14.0"
+    "node": ">=12.14.0"
   },
   "scripts": {
     "build": "yarn run clean && yarn run compile",
