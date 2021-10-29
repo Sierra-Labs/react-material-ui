@@ -48,7 +48,6 @@ export type InlineTextFieldProps = TextFieldProps & {
   label?: string;
   type?: string;
   value?: string | number;
-  error?: string;
   disabled?: boolean;
   multiline?: boolean;
   select?: boolean;
@@ -243,14 +242,15 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
                 }
               }}
               onBlur={
-                !overrideBlur && onBlur ? onBlur :
-                (event => {
-                  if (event.relatedTarget === cancelButtonRef.current) {
-                    handleCancel();
-                  } else {
-                    handleSubmit();
-                  }
-                })
+                !overrideBlur && onBlur
+                  ? onBlur
+                  : event => {
+                      if (event.relatedTarget === cancelButtonRef.current) {
+                        handleCancel();
+                      } else {
+                        handleSubmit();
+                      }
+                    }
               }
             >
               {children}
