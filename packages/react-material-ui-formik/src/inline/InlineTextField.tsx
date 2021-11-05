@@ -218,7 +218,7 @@ export const InlineTextField: React.FC<InlineTextFieldProps> = ({
               // InputLabelProps={{ shrink: true }}
               autoComplete='off'
               error={Boolean(error) || (meta.touched && Boolean(meta.error))}
-              helperText={error || meta.error}
+              helperText={meta.error || props.helperText}
               inputProps={{ maxLength }}
               InputProps={InputProps}
               onFocus={() => setFocus(true)}

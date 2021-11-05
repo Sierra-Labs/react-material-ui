@@ -113,8 +113,11 @@ export const FormikDatePicker: React.FC<
         format={format || 'MM/dd/yyyy'}
         label={label}
         placeholder={placeholder}
-        error={meta.touched && Boolean(meta.error)}
-        helperText={meta.error}
+        error={
+          Boolean(datePickerProps.error) ||
+          (meta.touched && Boolean(meta.error))
+        }
+        helperText={meta.error || datePickerProps.helperText}
         variant={variant}
         value={value}
         onChange={(date, value) => handleChange(date)}

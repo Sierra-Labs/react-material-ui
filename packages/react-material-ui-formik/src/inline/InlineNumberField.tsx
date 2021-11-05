@@ -78,11 +78,15 @@ export const InlineNumberField: React.FC<InlineNumberFieldProps> = ({
           value = values.value || null;
         }
         if (isNumericString) {
-          value = `${value}`;
+          value =
+            typeof value === 'number' || typeof value === 'string'
+              ? value.toString()
+              : '';
         }
         setValue(value);
       }}
       customInput={InlineTextField}
+      error={Boolean(props.error) || (meta.touched && Boolean(meta.error))}
       helperText={meta.error || helperText}
       name={name}
     />

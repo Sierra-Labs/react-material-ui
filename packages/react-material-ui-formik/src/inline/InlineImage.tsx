@@ -184,31 +184,29 @@ export const InlineImage: React.FC<InlineImageProps> = ({
           )}
         </Button>
       </div>
-      <InlineImageDialog
-        value={secureUrl}
-        open={open}
-        s3Path={s3Path}
-        onCancel={() => setOpen(false)}
-        onUploaded={url => {
-          setOpen(false);
-          setTouched(true);
-          setValue(url);
-          // delay URL as S3 take some time to make URL available after
-          // upload
-          setTimeout(() => {
+      {open && (
+        <InlineImageDialog
+          value={secureUrl}
+          open={open}
+          s3Path={s3Path}
+          onCancel={() => setOpen(false)}
+          onUploaded={url => {
+            setOpen(false);
+            setTouched(true);
+            setValue(url);
             formik.submitForm();
-          }, 300);
-        }}
-        onClear={() => {
-          setOpen(false);
-          setValue('');
-          setTouched(true);
-          formik.submitForm();
-        }}
-        title={title}
-        description={description}
-        resize={resize}
-      />
+          }}
+          onClear={() => {
+            setOpen(false);
+            setValue('');
+            setTouched(true);
+            formik.submitForm();
+          }}
+          title={title}
+          description={description}
+          resize={resize}
+        />
+      )}
     </StyledGrid>
   );
 };
@@ -297,6 +295,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragover, setDragover] = useState(false);
   const onUploadedRef = useRef(onUploaded);
+  onUploadedRef.current = onUploaded;
   const [file, setFile] = useState<File>();
   const [imageUrl, setImageUrl] = useState(value);
   const [isCleared, setIsCleared] = useState(false);
@@ -304,12 +303,42 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
     s3Path,
     defaultPresignEndPoint
   );
-
+  // when upload complete load image before submitting (S3 upload has delay
+  // before the image is accessible)
+  const secureFileUrl = useSecureFileUrl(fileUrl);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
-    if (fileUrl && progress === 1 && !isUploading) {
-      onUploadedRef.current(fileUrl);
+    if (secureFileUrl && fileUrl && progress === 1 && !isUploading) {
+      // load the image with retry logic in case S3 hasn't made file available
+      setLoading(true);
+      const image = new Image();
+      image.onload = () => {
+        onUploadedRef.current(fileUrl);
+        setLoading(false);
+      };
+      let count = 0;
+      let timeout: any;
+      image.onerror = () => {
+        // retry up to 10 times
+        if (count < 10) {
+          count++;
+          clearTimeout(timeout);
+          timeout = setTimeout(() => {
+            image.src = secureFileUrl;
+          }, 500);
+        } else {
+          // stop retrying
+          setLoading(false);
+        }
+      };
+      // start image load
+      image.src = secureFileUrl;
+      // on unmount stop retrying
+      return () => {
+        clearTimeout(timeout);
+      };
     }
-  }, [fileUrl, isUploading, progress]);
+  }, [secureFileUrl, fileUrl, isUploading, progress]);
 
   const handleFile = async (files: FileList | null) => {
     if (files && files.length > 0) {
@@ -318,7 +347,10 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
       setIsCleared(false);
       setFile(file);
       setImageUrl(dataUrl);
-      if (resize) {
+      if (
+        resize &&
+        file.type !== 'image/gif' /* don't resize animated gifs */
+      ) {
         if (!resize.type) {
           resize.type = file.type;
         }
@@ -400,7 +432,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
             onChange={event => handleFile(event.target.files)}
           />
         </StyledDragArea>
-        {isUploading && (
+        {(loading || isUploading) && (
           <LinearProgress
             color='primary'
             variant='determinate'
@@ -426,7 +458,7 @@ export const InlineImageDialog: React.FC<InlineImageDialogProps> = ({
           <Button
             variant='contained'
             color='primary'
-            disabled={!file || isUploading}
+            disabled={!file || isUploading || loading}
             onClick={() => upload(file as File)}
           >
             Upload

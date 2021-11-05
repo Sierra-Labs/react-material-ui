@@ -43,7 +43,7 @@ export const FormikNumberField: React.FC<FormikNumberFieldProps> = ({
   variant = 'outlined',
   ...props
 }) => {
-  const [field, meta, { setValue }] = useField(name);
+  const [field, meta, { setValue, setTouched }] = useField(name);
   if (creditcard) {
     format = '#### #### #### ####';
   } else if (phoneNumber) {
@@ -85,12 +85,16 @@ export const FormikNumberField: React.FC<FormikNumberFieldProps> = ({
             value = values.value || null;
           }
           if (isNumericString) {
-            value = `${value}`;
+            value =
+              typeof value === 'number' || typeof value === 'string'
+                ? value.toString()
+                : '';
           }
           setValue(value);
+          setTouched(true);
         }}
         customInput={TextField}
-        error={meta.touched && Boolean(meta.error)}
+        error={Boolean(props.error) || (meta.touched && Boolean(meta.error))}
         helperText={meta.error || helperText}
         name={name}
       />
