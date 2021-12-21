@@ -32,6 +32,7 @@ export const BreadcrumbHeading: React.FC<{
       {breadcrumbs.map(breadcrumb => (
         <Typography
           variant='h2'
+          color='inherit'
           key={`${breadcrumb.label}::${breadcrumb.path}`}
         >
           {breadcrumb.path ? (

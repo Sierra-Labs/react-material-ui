@@ -11,6 +11,7 @@ export interface StatusLabelColor {
 export type ThemeOptions = BaseThemeOptions & {
   pageTemplate?: {
     headerBackground?: string;
+    background?: string;
     headerText?: string;
     headerLink?: string;
     headerHoverLink?: string;
@@ -30,12 +31,32 @@ export type ThemeOptions = BaseThemeOptions & {
 };
 
 declare module '@material-ui/core/styles/createMuiTheme' {
-  interface Theme extends ThemeOptions {}
-
+  interface Theme {
+    pageTemplate?: {
+      headerBackground?: string;
+      background?: string;
+      headerText?: string;
+      headerLink?: string;
+      headerHoverLink?: string;
+    };
+    cardContent?: {
+      background?: {
+        primary?: string;
+        secondary?: string;
+      };
+    };
+    statusLabel?: {
+      draft?: StatusLabelColor;
+      inProgress?: StatusLabelColor;
+      error?: StatusLabelColor;
+      completed?: StatusLabelColor;
+    };
+  }
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
     pageTemplate?: {
       headerBackground?: string;
+      background?: string;
       headerText?: string;
       headerLink?: string;
       headerHoverLink?: string;

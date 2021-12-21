@@ -20,7 +20,10 @@ const StyledPageTemplate = styled.div`
         props.theme.pageTemplate?.headerBackground ||
         props.theme.palette.primary.dark}
       117px,
-    ${props => props.theme.palette.secondary.light} 0%
+    ${props =>
+        props.theme.pageTemplate?.background ||
+        props.theme.palette.secondary.light}
+      0%
   );
   .page-template-header {
     height: 117px;
@@ -36,7 +39,10 @@ const StyledPageTemplate = styled.div`
           props.theme.pageTemplate?.headerBackground ||
           props.theme.palette.primary.dark}
         117px,
-      ${props => props.theme.palette.secondary.light} 0%
+      ${props =>
+          props.theme.pageTemplate?.background ||
+          props.theme.palette.secondary.light}
+        0%
     );
   }
   &.card-over {
@@ -49,7 +55,10 @@ const StyledPageTemplate = styled.div`
           props.theme.pageTemplate?.headerBackground ||
           props.theme.palette.primary.dark}
         183px,
-      ${props => props.theme.palette.secondary.light} 0%
+      ${props =>
+          props.theme.pageTemplate?.background ||
+          props.theme.palette.secondary.light}
+        0%
     );
     .page-template-header {
       height: 126px;
