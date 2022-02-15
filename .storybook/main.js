@@ -5,7 +5,7 @@ module.exports = {
     '@storybook/addon-controls',
     '@storybook/addon-actions',
     '@storybook/addon-viewport',
-    '@storybook/addon-storysource'
+    '@storybook/addon-storysource',
     // '@storybook/addon-console',
     // '@storybook/preset-create-react-app'
   ],

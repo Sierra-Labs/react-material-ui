@@ -2,6 +2,7 @@ export * from './FormikAutocomplete';
 export * from './FormikButton';
 export * from './FormikCheckboxField';
 export * from './FormikGrid';
+export * from './FormikMultiSelect';
 export * from './FormikNumberField';
 export * from './FormikRadioGroup';
 export * from './FormikSelectField';
