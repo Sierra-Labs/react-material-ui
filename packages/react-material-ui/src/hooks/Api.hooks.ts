@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useReducer } from 'react';
+import { useState, useEffect, useCallback, useReducer, useRef } from 'react';
 import api, {
   FetchRequest,
   FetchError,
@@ -13,7 +13,10 @@ export interface ApiResult<T> {
   error?: FetchError;
 }
 
-export type FetchApiCallback = (params?: ApiParams) => void;
+export type FetchApiCallback = (
+  params?: ApiParams,
+  options?: RequestInit
+) => void;
 
 export interface ApiFetchResult<T> extends ApiResult<T> {
   fetchApi: FetchApiCallback;
@@ -39,28 +42,63 @@ export interface ApiDeleteResult<T> extends ApiResult<T> {
   del: FetchApiCallback;
 }
 
-export function useApiGet<T>(path: string): ApiGetResult<T> {
-  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Get, path);
+export function useApiGet<T>(
+  path: string,
+  options?: RequestInit
+): ApiGetResult<T> {
+  const { fetchApi, ...params } = useApiFetch<T>(
+    FetchMethod.Get,
+    path,
+    options
+  );
   return { ...params, get: fetchApi };
 }
 
-export function useApiPatch<T>(path: string): ApiPatchResult<T> {
-  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Patch, path);
+export function useApiPatch<T>(
+  path: string,
+  options?: RequestInit
+): ApiPatchResult<T> {
+  const { fetchApi, ...params } = useApiFetch<T>(
+    FetchMethod.Patch,
+    path,
+    options
+  );
   return { ...params, patch: fetchApi };
 }
 
-export function useApiPost<T>(path: string): ApiPostResult<T> {
-  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Post, path);
+export function useApiPost<T>(
+  path: string,
+  options?: RequestInit
+): ApiPostResult<T> {
+  const { fetchApi, ...params } = useApiFetch<T>(
+    FetchMethod.Post,
+    path,
+    options
+  );
   return { ...params, post: fetchApi };
 }
 
-export function useApiPut<T>(path: string): ApiPutResult<T> {
-  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Put, path);
+export function useApiPut<T>(
+  path: string,
+  options?: RequestInit
+): ApiPutResult<T> {
+  const { fetchApi, ...params } = useApiFetch<T>(
+    FetchMethod.Put,
+    path,
+    options
+  );
   return { ...params, put: fetchApi };
 }
 
-export function useApiDelete<T>(path: string): ApiDeleteResult<T> {
-  const { fetchApi, ...params } = useApiFetch<T>(FetchMethod.Delete, path);
+export function useApiDelete<T>(
+  path: string,
+  options?: RequestInit
+): ApiDeleteResult<T> {
+  const { fetchApi, ...params } = useApiFetch<T>(
+    FetchMethod.Delete,
+    path,
+    options
+  );
   return { ...params, del: fetchApi };
 }
 
@@ -92,8 +130,11 @@ function fetchReducer<T>(
 
 export function useApiFetch<T>(
   method: FetchMethod,
-  path: string
+  path: string,
+  options?: RequestInit
 ): ApiFetchResult<T> {
+  const optionsRef = useRef(options);
+
   const [response, setResponse] = useState<Response>();
   const [request, setRequest] = useState<FetchRequest>();
   const [state, dispatch] = useReducer(fetchReducer, { isLoading: false });
@@ -126,9 +167,11 @@ export function useApiFetch<T>(
     }
   }, [request]);
   const fetchApi = useCallback(
-    (params: ApiParams = {}) => {
+    (params: ApiParams = {}, options?: RequestInit) => {
       setResponse(undefined);
-      setRequest(api.fetch(method, path, params));
+      setRequest(
+        api.fetch(method, path, params, options || optionsRef.current)
+      );
     },
     [setRequest, method, path]
   );
@@ -141,7 +184,8 @@ export function useApiFetch<T>(
   };
 }
 
-const DATE_STRING_REGEX = /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
+const DATE_STRING_REGEX =
+  /\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+([+-][0-2]\d:[0-5]\d|Z)/;
 /**
  * Recursively checks the response json object for Date properties in string format and parses them to native JS Date type
  * @param json

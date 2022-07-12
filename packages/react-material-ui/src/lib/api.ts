@@ -44,25 +44,42 @@ export const api = {
     Cookies.remove(api.environment.accessTokenKey, {
       domain: api.environment.domain || window.location.hostname
     }),
-  get: (path: string, queryParams: ApiParams): FetchRequest => {
-    return api.fetch(FetchMethod.Get, path, queryParams);
+  get: (
+    path: string,
+    queryParams: ApiParams,
+    options?: RequestInit
+  ): FetchRequest => {
+    return api.fetch(FetchMethod.Get, path, queryParams, options);
   },
-  delete: (path: string, queryParams: ApiParams): FetchRequest => {
-    return api.fetch(FetchMethod.Delete, path, queryParams);
+  delete: (
+    path: string,
+    queryParams: ApiParams,
+    options?: RequestInit
+  ): FetchRequest => {
+    return api.fetch(FetchMethod.Delete, path, queryParams, options);
   },
-  patch: (path: string, body: ApiParams): FetchRequest => {
-    return api.fetch(FetchMethod.Patch, path, body);
+  patch: (
+    path: string,
+    body: ApiParams,
+    options?: RequestInit
+  ): FetchRequest => {
+    return api.fetch(FetchMethod.Patch, path, body, options);
   },
-  post: (path: string, body: ApiParams): FetchRequest => {
-    return api.fetch(FetchMethod.Post, path, body);
+  post: (
+    path: string,
+    body: ApiParams,
+    options?: RequestInit
+  ): FetchRequest => {
+    return api.fetch(FetchMethod.Post, path, body, options);
   },
-  put: (path: string, body: ApiParams): FetchRequest => {
-    return api.fetch(FetchMethod.Put, path, body);
+  put: (path: string, body: ApiParams, options?: RequestInit): FetchRequest => {
+    return api.fetch(FetchMethod.Put, path, body, options);
   },
   fetch: (
     method: FetchMethod,
     path: string,
-    params: ApiParams = {}
+    params: ApiParams = {},
+    options: RequestInit = {}
   ): FetchRequest => {
     const controller = new AbortController();
     const { signal } = controller; // allow aborting the fetch call
@@ -73,14 +90,12 @@ export const api = {
     }
     const url = new URL(path, api.environment.apiBaseUrl);
     // console.log('url', url);
-    const headers = {
-      [api.environment.accessTokenKey]: `Bearer ${api.getAccessToken()}`
+    options.headers = {
+      [api.environment.accessTokenKey]: `Bearer ${api.getAccessToken()}`,
+      ...(options.headers || {})
     } as any;
-    const options: RequestInit = {
-      headers,
-      method,
-      signal
-    };
+    options.method = method;
+    options.signal = signal;
     switch (method) {
       case FetchMethod.Get:
       case FetchMethod.Delete:
@@ -94,8 +109,12 @@ export const api = {
       case FetchMethod.Patch:
       case FetchMethod.Post:
       case FetchMethod.Put:
-        (options.headers as any)['content-type'] = 'application/json';
-        options.body = JSON.stringify(params);
+        if (!(options.headers as any)['content-type']) {
+          (options.headers as any)['content-type'] = 'application/json';
+        }
+        if (!options.body) {
+          options.body = JSON.stringify(params);
+        }
         break;
     }
     return {
