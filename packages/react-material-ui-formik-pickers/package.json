@@ -2,6 +2,14 @@
   "name": "@sierralabs/react-material-ui-formik-pickers",
   "version": "0.2.16",
   "description": "Sierra React Material UI Formik Date Picker Library",
+  "author": "Sierra Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sierra-labs/react-material-ui.git",
+    "directory": "packages/react-material-ui-formik-pickers"
+  },
+  "homepage": "https://github.com/sierra-labs/react-material-ui#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.es.js",
@@ -17,8 +25,6 @@
     "start": "yarn run build -- --watch",
     "test": "jest --watchAll"
   },
-  "author": "Sierra Labs",
-  "license": "Sierra Labs",
   "engines": {
     "node": ">=12.14.0"
   },

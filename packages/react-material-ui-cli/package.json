@@ -3,7 +3,13 @@
   "version": "0.1.5",
   "description": "Sierra Labs React Material UI CLI",
   "author": "Sierra Labs",
-  "license": "Sierra Labs",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sierra-labs/react-material-ui.git",
+    "directory": "packages/react-material-ui-cli"
+  },
+  "homepage": "https://github.com/sierra-labs/react-material-ui#readme",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "module": "dist/index.es.js",
